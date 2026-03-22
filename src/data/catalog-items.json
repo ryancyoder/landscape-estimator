@@ -1,0 +1,602 @@
+[
+  {
+    "id": "p1",
+    "name": "Evergreen Tree",
+    "category": "plants",
+    "unit": "ea",
+    "unitPrice": 85,
+    "description": "Evergreen tree, installed",
+    "planSymbol": "evergreen"
+  },
+  {
+    "id": "p2",
+    "name": "Shade Tree",
+    "category": "plants",
+    "unit": "ea",
+    "unitPrice": 125,
+    "description": "Deciduous shade tree, installed",
+    "planSymbol": "shade-tree"
+  },
+  {
+    "id": "p3",
+    "name": "Ornamental Tree",
+    "category": "plants",
+    "unit": "ea",
+    "unitPrice": 95,
+    "description": "Ornamental flowering tree, installed"
+  },
+  {
+    "id": "p4",
+    "name": "Shrub",
+    "category": "plants",
+    "unit": "ea",
+    "unitPrice": 32,
+    "description": "Shrub, installed",
+    "planSymbol": "shrub"
+  },
+  {
+    "id": "p5",
+    "name": "Perennial",
+    "category": "plants",
+    "unit": "ea",
+    "unitPrice": 12,
+    "description": "Perennial flower, installed",
+    "planSymbol": "perennial"
+  },
+  {
+    "id": "p6",
+    "name": "Ground Cover",
+    "category": "plants",
+    "unit": "sq ft",
+    "unitPrice": 3.5,
+    "description": "Ground cover plants, installed"
+  },
+  {
+    "id": "p7",
+    "name": "Plant Allowance",
+    "category": "plants",
+    "unit": "sq ft",
+    "unitPrice": 5,
+    "description": "Allowance for plants per sq ft of bed"
+  },
+  {
+    "id": "lw1",
+    "name": "Sod Installation",
+    "category": "lawn",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 450,
+    "unit": "pallet",
+    "unitPrice": 240,
+    "unitsPerLoad": 4,
+    "deliveryRate": 80,
+    "description": "Turfgrass sod, installed (450 sq ft / pallet)"
+  },
+  {
+    "id": "custom-lawn-1773871769566-1",
+    "name": "Erosion Blanket",
+    "category": "lawn",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 900,
+    "unit": "roll",
+    "unitPrice": 140,
+    "unitsPerLoad": 0,
+    "deliveryRate": 0,
+    "description": "Erosion control blanket (900 sq ft / roll)"
+  },
+  {
+    "id": "custom-lawn-1773872138252-1",
+    "name": "Mirimichi (Lawn)",
+    "category": "lawn",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 500,
+    "unit": "bag",
+    "unitPrice": 41,
+    "unitsPerLoad": 0,
+    "deliveryRate": 0,
+    "description": "Mirimichi green carbon compost, lawn application (500 sq ft / bag)"
+  },
+  {
+    "id": "custom-lawn-1773872183645-2",
+    "name": "Pulverized Topsoil (Lawn)",
+    "category": "lawn",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 175,
+    "unit": "cu yd",
+    "unitPrice": 50,
+    "unitsPerLoad": 5,
+    "deliveryRate": 0,
+    "description": "Pulverized topsoil, lawn installation (175 sq ft / cu yd)"
+  },
+  {
+    "id": "custom-lawn-1773872250749-3",
+    "name": "Grass Seed",
+    "category": "lawn",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 5000,
+    "unit": "bag",
+    "unitPrice": 225,
+    "unitsPerLoad": 0,
+    "deliveryRate": 0,
+    "description": "Grass seed (5,000 sq ft / bag)"
+  },
+  {
+    "id": "m1",
+    "name": "Mulch",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 65,
+    "unit": "cu yd",
+    "unitPrice": 46,
+    "unitsPerLoad": 8,
+    "deliveryRate": 80,
+    "description": "2\" depth hardwood mulch (65 sq ft / cu yd)"
+  },
+  {
+    "id": "bm1",
+    "name": "HPB Bedding",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 100,
+    "unit": "ton",
+    "unitPrice": 37.5,
+    "unitsPerLoad": 5,
+    "deliveryRate": 80,
+    "description": "High-performance bedding aggregate, depth baked in (100 sq ft / ton)"
+  },
+  {
+    "id": "custom-bulk_materials-1773872363738-1",
+    "name": "Compost",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 125,
+    "unit": "cu yd",
+    "unitPrice": 55,
+    "unitsPerLoad": 5,
+    "deliveryRate": 0,
+    "description": "Compost, bed installation (125 sq ft / cu yd)"
+  },
+  {
+    "id": "custom-bulk_materials-1773872382842-2",
+    "name": "Decorative Stone",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 80,
+    "unit": "ton",
+    "unitPrice": 300,
+    "unitsPerLoad": 5,
+    "deliveryRate": 0,
+    "description": "Decorative stone, bed installation (80 sq ft / ton)"
+  },
+  {
+    "id": "custom-bulk_materials-1773872429448-3",
+    "name": "Clean 8 (Pavers)",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 20,
+    "unit": "ton",
+    "unitPrice": 37.5,
+    "unitsPerLoad": 5,
+    "deliveryRate": 0,
+    "description": "Clean 8 aggregate base, patio (20 sq ft / ton)"
+  },
+  {
+    "id": "custom-bulk_materials-1773872440904-4",
+    "name": "Clean 8 (French Drain)",
+    "category": "bulk_materials",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 30,
+    "unit": "ton",
+    "unitPrice": 37.5,
+    "unitsPerLoad": 5,
+    "deliveryRate": 0,
+    "description": "Clean 8 aggregate, French drain fill (30 lin ft / ton)"
+  },
+  {
+    "id": "m6",
+    "name": "Landscape Fabric",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 1500,
+    "unit": "roll",
+    "unitPrice": 562,
+    "description": "Heavy-duty woven geotextile (1,500 sq ft / roll)"
+  },
+  {
+    "id": "sm1",
+    "name": "Stabilization Fabric",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 1500,
+    "unit": "roll",
+    "unitPrice": 562,
+    "description": "Non-woven stabilization geotextile, hardscape base (1,500 sq ft / roll)"
+  },
+  {
+    "id": "sm2",
+    "name": "Mirimichi (Bed)",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 100,
+    "unit": "bag",
+    "unitPrice": 41,
+    "description": "Mirimichi green carbon compost, bed application (100 sq ft / bag)"
+  },
+  {
+    "id": "sm3",
+    "name": "Polymeric Sand",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 75,
+    "unit": "bag",
+    "unitPrice": 81,
+    "description": "Polymeric jointing sand, paver patio (75 sq ft / bag)"
+  },
+  {
+    "id": "m7",
+    "name": "Metal Edging",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 1,
+    "unit": "lin ft",
+    "unitPrice": 2.5,
+    "description": "4\" powder-coated steel edging"
+  },
+  {
+    "id": "sm4",
+    "name": "Perma Edge",
+    "category": "standard_materials",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 80,
+    "unit": "pail",
+    "unitPrice": 32,
+    "description": "Perma Edge paver restraint (80 lin ft / pail)"
+  },
+  {
+    "id": "ed1",
+    "name": "Spade Edging",
+    "category": "edging",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 1,
+    "unit": "lin ft",
+    "unitPrice": 1.5,
+    "unitsPerLoad": 500,
+    "deliveryRate": 0,
+    "description": "Bed edge cutting with spade"
+  },
+  {
+    "id": "ed2",
+    "name": "Steel Edging",
+    "category": "edging",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 1,
+    "unit": "lin ft",
+    "unitPrice": 4.5,
+    "unitsPerLoad": 200,
+    "deliveryRate": 0,
+    "description": "1/8\" Corten steel edging, installed"
+  },
+  {
+    "id": "ed5",
+    "name": "Paver Edging",
+    "category": "edging",
+    "isAssembly": true,
+    "takeoffUnit": "lin ft",
+    "coverageRate": 1,
+    "unit": "lin ft",
+    "unitPrice": 6.5,
+    "unitsPerLoad": 100,
+    "deliveryRate": 0,
+    "description": "Soldier course paver edging, installed"
+  },
+  {
+    "id": "l1",
+    "name": "General Labor",
+    "category": "labor",
+    "unit": "hr",
+    "unitPrice": 65,
+    "description": "Crew labor, planting & prep"
+  },
+  {
+    "id": "l2",
+    "name": "Machine Operator",
+    "category": "labor",
+    "unit": "hr",
+    "unitPrice": 95,
+    "description": "Skid steer or excavator operator"
+  },
+  {
+    "id": "l3",
+    "name": "Design Fee",
+    "category": "labor",
+    "unit": "ea",
+    "unitPrice": 350,
+    "description": "Landscape design & plan drawing"
+  },
+  {
+    "id": "l4",
+    "name": "Site Cleanup",
+    "category": "labor",
+    "unit": "hr",
+    "unitPrice": 55,
+    "description": "Debris removal and haul-off"
+  },
+  {
+    "id": "l5",
+    "name": "Irrigation Install",
+    "category": "labor",
+    "unit": "hr",
+    "unitPrice": 85,
+    "description": "Drip or spray system installation"
+  },
+  {
+    "id": "l6",
+    "name": "3-Man Crew Day",
+    "category": "labor",
+    "unit": "day",
+    "unitPrice": 2145,
+    "description": "3-man crew, full day (33 man-hrs @ $65/hr)"
+  },
+  {
+    "id": "l7",
+    "name": "4-Man Crew Day",
+    "category": "labor",
+    "unit": "day",
+    "unitPrice": 2860,
+    "description": "4-man crew, full day (44 man-hrs @ $65/hr)"
+  },
+  {
+    "id": "h7",
+    "name": "Paver (Generic)",
+    "category": "hardscape",
+    "isAssembly": true,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 116,
+    "unit": "pallet",
+    "unitPrice": 1200,
+    "description": "Generic paver material allowance (116 sq ft / pallet)"
+  },
+  {
+    "id": "h8",
+    "name": "HF Grand Ledge",
+    "category": "hardscape",
+    "isAssembly": true,
+    "takeoffUnit": "face ft",
+    "coverageRate": 18,
+    "unit": "pallet",
+    "unitPrice": 711,
+    "description": "Hillside/Fendt Grand Ledge wall block (18 face ft / pallet)"
+  },
+  {
+    "id": "h9",
+    "name": "Grid (Wall Reinforcement)",
+    "category": "hardscape",
+    "isAssembly": true,
+    "takeoffUnit": "face ft",
+    "coverageRate": 900,
+    "unit": "roll",
+    "unitPrice": 1400,
+    "description": "Geogrid wall reinforcement, 300 lf/roll @ 1 lf per 3 face ft (900 face ft / roll)"
+  },
+  {
+    "id": "h10",
+    "name": "Steps (6 ft Generic)",
+    "category": "hardscape",
+    "unit": "ea",
+    "unitPrice": 330,
+    "description": "Generic 6 ft wide step unit",
+    "isAssembly": false,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 1
+  },
+  {
+    "id": "e1",
+    "name": "Skid Steer",
+    "category": "heavy_equipment",
+    "unit": "day",
+    "unitPrice": 425,
+    "description": "Skid steer loader rental"
+  },
+  {
+    "id": "e2",
+    "name": "Mini Excavator",
+    "category": "heavy_equipment",
+    "unit": "day",
+    "unitPrice": 375,
+    "description": "Compact excavator rental"
+  },
+  {
+    "id": "e8",
+    "name": "Dump Trailer",
+    "category": "heavy_equipment",
+    "unit": "day",
+    "unitPrice": 95,
+    "description": "Dump trailer rental"
+  },
+  {
+    "id": "e3",
+    "name": "Plate Compactor",
+    "category": "small_equipment",
+    "unit": "day",
+    "unitPrice": 120,
+    "description": "Vibratory plate compactor rental"
+  },
+  {
+    "id": "e4",
+    "name": "Sod Cutter",
+    "category": "small_equipment",
+    "unit": "day",
+    "unitPrice": 145,
+    "description": "Walk-behind sod cutter rental"
+  },
+  {
+    "id": "e5",
+    "name": "Aerator",
+    "category": "small_equipment",
+    "unit": "day",
+    "unitPrice": 110,
+    "description": "Core aerator rental"
+  },
+  {
+    "id": "e6",
+    "name": "Stump Grinder",
+    "category": "small_equipment",
+    "unit": "day",
+    "unitPrice": 225,
+    "description": "Stump grinder rental"
+  },
+  {
+    "id": "e7",
+    "name": "Trencher",
+    "category": "small_equipment",
+    "unit": "day",
+    "unitPrice": 185,
+    "description": "Walk-behind chain trencher rental"
+  },
+  {
+    "id": "d1",
+    "name": "French Drain",
+    "category": "drainage",
+    "unit": "lin ft",
+    "unitPrice": 18,
+    "description": "4\" perforated pipe w/ fabric sock, installed"
+  },
+  {
+    "id": "d2",
+    "name": "Catch Basin",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 285,
+    "description": "12\" catch basin w/ grate, installed"
+  },
+  {
+    "id": "d3",
+    "name": "Drain Pipe 4\"",
+    "category": "drainage",
+    "unit": "lin ft",
+    "unitPrice": 6.5,
+    "description": "4\" solid PVC drain pipe"
+  },
+  {
+    "id": "d4",
+    "name": "Drain Pipe 6\"",
+    "category": "drainage",
+    "unit": "lin ft",
+    "unitPrice": 9,
+    "description": "6\" solid PVC drain pipe"
+  },
+  {
+    "id": "d5",
+    "name": "Channel Drain",
+    "category": "drainage",
+    "unit": "lin ft",
+    "unitPrice": 32,
+    "description": "Surface channel drain w/ grate, installed"
+  },
+  {
+    "id": "d6",
+    "name": "Pop-up Emitter",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 45,
+    "description": "4\" pop-up emitter, installed"
+  },
+  {
+    "id": "d7",
+    "name": "Dry Well",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 650,
+    "description": "Gravel-filled dry well pit, installed"
+  },
+  {
+    "id": "d8",
+    "name": "Downspout Extension",
+    "category": "drainage",
+    "unit": "lin ft",
+    "unitPrice": 8,
+    "description": "Buried downspout extension to daylight"
+  },
+  {
+    "id": "li1",
+    "name": "Path Light",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 95,
+    "description": "Low-voltage LED path light, installed"
+  },
+  {
+    "id": "li2",
+    "name": "Spot Light",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 115,
+    "description": "Low-voltage LED spot/flood, installed"
+  },
+  {
+    "id": "li3",
+    "name": "Well Light",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 130,
+    "description": "In-ground well light, installed"
+  },
+  {
+    "id": "li4",
+    "name": "Step Light",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 85,
+    "description": "Low-voltage step/riser light, installed"
+  },
+  {
+    "id": "li5",
+    "name": "Deck / Post Light",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 90,
+    "description": "Low-voltage deck or post cap light, installed"
+  },
+  {
+    "id": "li6",
+    "name": "Transformer",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 225,
+    "description": "Low-voltage transformer (150W), installed"
+  },
+  {
+    "id": "li7",
+    "name": "Landscape Wire",
+    "category": "lighting",
+    "unit": "lin ft",
+    "unitPrice": 1.25,
+    "description": "12-gauge low-voltage wire, installed"
+  },
+  {
+    "id": "li8",
+    "name": "Lighting Design",
+    "category": "lighting",
+    "unit": "ea",
+    "unitPrice": 200,
+    "description": "Lighting layout and design fee"
+  }
+]
