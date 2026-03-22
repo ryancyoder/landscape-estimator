@@ -23,6 +23,7 @@ export default function PlanView({
   onSetPlanImage, onSetPlanScale,
   onAddShape, onUpdateShape, onRemoveShape,
   onAddPlant, onRemovePlant,
+  onAddGroup,
   onClose,
 }) {
   const [activeTool, setActiveTool] = useState('select');
@@ -143,6 +144,7 @@ export default function PlanView({
           onResetScale={handleResetScale}
           onUpdateShape={onUpdateShape}
           onRemoveShape={onRemoveShape}
+          onAddGroup={onAddGroup}
         />
       </div>
     </div>

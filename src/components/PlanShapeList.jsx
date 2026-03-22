@@ -3,37 +3,87 @@ import { PLANT_TYPES } from './PlanCanvas';
 
 const PLANT_SYMBOL_MAP = Object.fromEntries(PLANT_TYPES.map(pt => [pt.key, pt]));
 
-function ShapeItem({ shape, availableGroups, onUpdate, onRemove }) {
+function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
+  const [naming, setNaming] = useState(false);
+  const [newName, setNewName] = useState('');
+
+  function handleSelectChange(e) {
+    if (e.target.value === '__new__') {
+      setNaming(true);
+      setNewName('');
+    } else {
+      onUpdate(shape.id, { groupId: e.target.value || null });
+    }
+  }
+
+  function handleConfirmNew() {
+    const name = newName.trim() || 'New Take Off';
+    const groupId = onAddGroup(name);
+    onUpdate(shape.id, { groupId });
+    setNaming(false);
+  }
+
+  const header = (
+    <div className="flex items-center gap-2">
+      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: shape.color }} />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold text-gray-700 truncate">
+          {shape.type === 'area'
+            ? `${Math.round(shape.measurement).toLocaleString()} sq ft`
+            : `${Math.round(shape.measurement).toLocaleString()} lin ft`}
+        </p>
+        <p className="text-[10px] text-gray-400">{shape.type === 'area' ? 'Area' : 'Linear'}</p>
+      </div>
+      <button
+        onClick={() => onRemove(shape.id)}
+        className="shrink-0 p-0.5 rounded text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+        title="Remove shape"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  );
+
+  if (naming) {
+    return (
+      <div className="rounded-lg border border-indigo-300 bg-indigo-50 p-2 flex flex-col gap-1.5">
+        {header}
+        <input
+          autoFocus
+          type="text"
+          value={newName}
+          onChange={e => setNewName(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') handleConfirmNew(); if (e.key === 'Escape') setNaming(false); }}
+          placeholder="Group name…"
+          className="w-full text-xs border border-indigo-300 rounded px-1.5 py-1 bg-white text-gray-800
+                     focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
+        <div className="flex gap-1">
+          <button
+            onClick={handleConfirmNew}
+            className="flex-1 py-1 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded font-medium transition-colors"
+          >
+            Create
+          </button>
+          <button
+            onClick={() => setNaming(false)}
+            className="flex-1 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded font-medium transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-2 flex flex-col gap-1.5">
-      <div className="flex items-center gap-2">
-        {/* Color swatch */}
-        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: shape.color }} />
-        {/* Type + measurement */}
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-gray-700 truncate">
-            {shape.type === 'area'
-              ? `${Math.round(shape.measurement).toLocaleString()} sq ft`
-              : `${Math.round(shape.measurement).toLocaleString()} lin ft`}
-          </p>
-          <p className="text-[10px] text-gray-400">{shape.type === 'area' ? 'Area' : 'Linear'}</p>
-        </div>
-        {/* Delete */}
-        <button
-          onClick={() => onRemove(shape.id)}
-          className="shrink-0 p-0.5 rounded text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-          title="Remove shape"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      {/* Group dropdown — only shows groups not already linked to another shape of the same type */}
+      {header}
       <select
         value={shape.groupId || ''}
-        onChange={e => onUpdate(shape.id, { groupId: e.target.value || null })}
+        onChange={handleSelectChange}
         className="w-full text-xs border border-gray-200 rounded px-1.5 py-1 bg-white text-gray-700
                    focus:outline-none focus:ring-1 focus:ring-indigo-400"
       >
@@ -41,6 +91,7 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove }) {
         {availableGroups.map(g => (
           <option key={g.id} value={g.id}>{g.label}</option>
         ))}
+        <option value="__new__">＋ New group…</option>
       </select>
     </div>
   );
@@ -49,7 +100,7 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove }) {
 export default function PlanShapeList({
   plan, groups, catalogPlants, calPending, calPoints,
   onSetPlanImage, onSetScale, onResetScale,
-  onUpdateShape, onRemoveShape,
+  onUpdateShape, onRemoveShape, onAddGroup,
 }) {
   const fileInputRef = useRef(null);
   const [calDistance, setCalDistance] = useState('');
@@ -180,6 +231,7 @@ export default function PlanShapeList({
               availableGroups={availableGroups}
               onUpdate={onUpdateShape}
               onRemove={onRemoveShape}
+              onAddGroup={onAddGroup}
             />
           );
         })}

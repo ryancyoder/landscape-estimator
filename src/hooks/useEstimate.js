@@ -276,14 +276,14 @@ export function useEstimate() {
 
   // ── Groups ──────────────────────────────────────────────────────────────────
 
-  const addGroup = useCallback(() => {
+  const addGroup = useCallback((label = 'New Take Off') => {
     const id = genId('group');
     setEstimate(prev => ({
       ...prev,
       rows: [...prev.rows, {
         type: 'group',
         id,
-        label: 'New Take Off',
+        label,
         sqFt: 0,
         linearFt: 0,
         height: 0,

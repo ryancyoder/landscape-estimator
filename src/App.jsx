@@ -299,6 +299,7 @@ export default function App() {
             onRemoveShape={removeShape}
             onAddPlant={(plant) => addPlant(plant, catalogItems)}
             onRemovePlant={(plantId) => removePlant(plantId, catalogItems)}
+            onAddGroup={addGroup}
             onClose={() => setPlanOpen(false)}
           />
         ) : (
