@@ -34,6 +34,7 @@ export default function App() {
     updateTakeoff,
     updateWallDimensions,
     reorderRows,
+    moveItemToGroup,
     importEstimate,
     resetEstimate,
     setPlanImage,
@@ -46,6 +47,8 @@ export default function App() {
     addItemPlacement,
     removeItemPlacement,
     subtotal,
+    totalLoads,
+    totalDelivery,
     taxAmount,
     total,
   } = useEstimate();
@@ -168,9 +171,30 @@ export default function App() {
         addItem(activeData.catalogItem, parentGroup ? parentGroup.id : null);
       }
     } else {
-      // Reordering estimate rows
+      // Reordering / moving estimate rows
       if (active.id !== over.id) {
-        reorderRows(active.id, over.id);
+        // Find which group (if any) the active item lives in
+        let activeGroupId = null;
+        for (const row of estimate.rows) {
+          if (row.type === 'item' && row.id === active.id) { activeGroupId = null; break; }
+          if (row.type === 'group' && row.items.some(i => i.id === active.id)) {
+            activeGroupId = row.id; break;
+          }
+        }
+
+        // Find which group (if any) the over target belongs to
+        const overIsGroup = estimate.rows.find(r => r.id === over.id && r.type === 'group');
+        const overGroupViaItem = estimate.rows.find(
+          r => r.type === 'group' && r.items.some(i => i.id === over.id)
+        );
+        const overGroupId = overIsGroup ? over.id : (overGroupViaItem?.id ?? null);
+
+        if (activeGroupId !== overGroupId && (overIsGroup || overGroupViaItem)) {
+          // Cross-group move
+          moveItemToGroup(active.id, overGroupId);
+        } else {
+          reorderRows(active.id, over.id);
+        }
       }
     }
   }
@@ -337,6 +361,8 @@ export default function App() {
               activeGroupId={activeGroupId}
               onSetActiveGroup={setActiveGroupId}
               subtotal={subtotal}
+              totalLoads={totalLoads}
+              totalDelivery={totalDelivery}
               taxAmount={taxAmount}
               total={total}
             />
@@ -348,6 +374,8 @@ export default function App() {
       <PrintView
         estimate={estimate}
         subtotal={subtotal}
+        totalLoads={totalLoads}
+        totalDelivery={totalDelivery}
         taxAmount={taxAmount}
         total={total}
       />

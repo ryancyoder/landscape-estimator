@@ -8,11 +8,7 @@ function itemLineTotal(item) {
   if (item.isWallAssembly) {
     return (item.faceFt * item.pricePerFaceFt) + (item.linearFt * item.pricePerLinearFt);
   }
-  const materialCost = item.quantity * item.unitPrice;
-  const loads = (item.unitsPerLoad && item.quantity > 0)
-    ? Math.ceil(item.quantity / item.unitsPerLoad)
-    : 0;
-  return materialCost + loads * (item.deliveryRate ?? 0);
+  return item.quantity * item.unitPrice;
 }
 
 function buildCategorySummary(items) {
@@ -30,10 +26,8 @@ function buildCategorySummary(items) {
 
 function renderItemRows(item, idx) {
   const lineTotal = itemLineTotal(item);
-  const loads = (item.unitsPerLoad && item.quantity > 0)
-    ? Math.ceil(item.quantity / item.unitsPerLoad)
-    : 0;
-  const deliveryCost = loads * (item.deliveryRate ?? 0);
+  const loads = (!item.isWallAssembly && item.unitsPerLoad && item.quantity > 0)
+    ? Math.ceil(item.quantity / item.unitsPerLoad) : 0;
   const bg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
 
   const rows = [
@@ -54,6 +48,7 @@ function renderItemRows(item, idx) {
           <>
             {item.takeoffQty}
             <span className="block text-xs text-gray-400">= {item.quantity.toFixed(2)} {item.unit}</span>
+            {loads > 0 && <span className="block text-xs text-gray-400">{loads} load{loads !== 1 ? 's' : ''}</span>}
           </>
         ) : item.quantity}
       </td>
@@ -65,14 +60,7 @@ function renderItemRows(item, idx) {
           </>
         ) : `$${fmt(item.unitPrice)}`}
       </td>
-      <td className="px-4 py-2 text-right font-semibold">
-        ${fmt(lineTotal)}
-        {deliveryCost > 0 && (
-          <span className="block text-xs text-gray-400 font-normal">
-            incl. ${fmt(deliveryCost)} delivery
-          </span>
-        )}
-      </td>
+      <td className="px-4 py-2 text-right font-semibold">${fmt(lineTotal)}</td>
     </tr>,
   ];
 
@@ -89,7 +77,7 @@ function renderItemRows(item, idx) {
   return rows;
 }
 
-export default function PrintView({ estimate, subtotal, taxAmount, total }) {
+export default function PrintView({ estimate, subtotal, totalLoads, totalDelivery, taxAmount, total }) {
   const allItems = estimate.rows.flatMap(row =>
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
@@ -199,9 +187,15 @@ export default function PrintView({ estimate, subtotal, taxAmount, total }) {
           </h2>
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="px-4 py-2 flex justify-between text-sm">
-              <span className="text-gray-600">Subtotal</span>
+              <span className="text-gray-600">Materials</span>
               <span className="font-medium">${fmt(subtotal)}</span>
             </div>
+            {totalLoads > 0 && (
+              <div className="px-4 py-2 flex justify-between text-sm border-t border-gray-100">
+                <span className="text-gray-600">Delivery ({totalLoads} load{totalLoads !== 1 ? 's' : ''})</span>
+                <span className="font-medium">${fmt(totalDelivery)}</span>
+              </div>
+            )}
             <div className="px-4 py-2 flex justify-between text-sm border-t border-gray-100">
               <span className="text-gray-600">Tax ({estimate.taxRate}%)</span>
               <span className="font-medium">${fmt(taxAmount)}</span>

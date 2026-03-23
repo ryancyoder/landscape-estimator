@@ -18,6 +18,8 @@ export default function EstimatePanel({
   activeGroupId,
   onSetActiveGroup,
   subtotal,
+  totalLoads,
+  totalDelivery,
   taxAmount,
   total,
 }) {
@@ -123,6 +125,8 @@ export default function EstimatePanel({
         {hasRows && (
           <EstimateSummary
             subtotal={subtotal}
+            totalLoads={totalLoads}
+            totalDelivery={totalDelivery}
             taxAmount={taxAmount}
             total={total}
             taxRate={estimate.taxRate}

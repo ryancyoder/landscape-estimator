@@ -192,10 +192,7 @@ function itemLineTotal(item) {
   if (item.isWallAssembly) {
     return (item.faceFt * item.pricePerFaceFt) + (item.linearFt * item.pricePerLinearFt);
   }
-  const materialCost = item.quantity * item.unitPrice;
-  const loads = (item.unitsPerLoad && item.quantity > 0)
-    ? Math.ceil(item.quantity / item.unitsPerLoad) : 0;
-  return materialCost + loads * (item.deliveryRate ?? 0);
+  return item.quantity * item.unitPrice;
 }
 
 function buildItem(catalogItem, groupId = null) {
@@ -547,6 +544,45 @@ export function useEstimate() {
     });
   }, []);
 
+  const moveItemToGroup = useCallback((itemId, targetGroupId) => {
+    setEstimate(prev => {
+      // Find the item wherever it lives
+      let foundItem = prev.rows.find(r => r.type === 'item' && r.id === itemId);
+      if (!foundItem) {
+        for (const row of prev.rows) {
+          if (row.type === 'group') {
+            const it = row.items.find(i => i.id === itemId);
+            if (it) { foundItem = it; break; }
+          }
+        }
+      }
+      if (!foundItem) return prev;
+      // Don't allow moving auto-synced plant/item-placement rows
+      if (foundItem.isPlantItem || foundItem.isItemPlacement) return prev;
+
+      // Remove from current location
+      const rowsWithout = prev.rows
+        .filter(r => !(r.type === 'item' && r.id === itemId))
+        .map(row => row.type === 'group'
+          ? { ...row, items: row.items.filter(i => i.id !== itemId) }
+          : row
+        );
+
+      const movedItem = { ...foundItem, groupId: targetGroupId };
+
+      if (!targetGroupId) {
+        return { ...prev, rows: [...rowsWithout, movedItem] };
+      }
+      return {
+        ...prev,
+        rows: rowsWithout.map(row => {
+          if (row.id !== targetGroupId || row.type !== 'group') return row;
+          return { ...row, items: [...row.items, applyGroupTakeoff(movedItem, row)] };
+        }),
+      };
+    });
+  }, []);
+
   const reorderRows = useCallback((activeId, overId) => {
     setEstimate(prev => {
       // Try reordering top-level rows
@@ -576,8 +612,16 @@ export function useEstimate() {
   );
 
   const subtotal = allItems.reduce((sum, item) => sum + itemLineTotal(item), 0);
+  const totalLoads = allItems.reduce((sum, item) => {
+    if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
+    return sum + Math.ceil(item.quantity / item.unitsPerLoad);
+  }, 0);
+  const totalDelivery = allItems.reduce((sum, item) => {
+    if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
+    return sum + Math.ceil(item.quantity / item.unitsPerLoad) * (item.deliveryRate ?? 0);
+  }, 0);
   const taxAmount = subtotal * (estimate.taxRate / 100);
-  const total = subtotal + taxAmount;
+  const total = subtotal + taxAmount + totalDelivery;
 
   return {
     estimate,
@@ -592,6 +636,7 @@ export function useEstimate() {
     updateTakeoff,
     updateWallDimensions,
     reorderRows,
+    moveItemToGroup,
     importEstimate,
     resetEstimate,
     setPlanImage,
@@ -604,6 +649,8 @@ export function useEstimate() {
     addItemPlacement,
     removeItemPlacement,
     subtotal,
+    totalLoads,
+    totalDelivery,
     taxAmount,
     total,
   };

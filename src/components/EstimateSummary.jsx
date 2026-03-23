@@ -2,16 +2,24 @@ function fmt(n) {
   return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function EstimateSummary({ subtotal, taxAmount, total, taxRate, onTaxRateChange }) {
+export default function EstimateSummary({ subtotal, taxAmount, total, taxRate, onTaxRateChange, totalLoads, totalDelivery }) {
   return (
     <div className="mt-4 flex justify-end">
       <div className="w-72 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <div className="px-4 py-3 space-y-2">
           {/* Subtotal */}
           <div className="flex justify-between text-sm text-gray-600">
-            <span>Subtotal</span>
+            <span>Materials</span>
             <span className="font-medium text-gray-800">${fmt(subtotal)}</span>
           </div>
+
+          {/* Delivery */}
+          {totalLoads > 0 && (
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Delivery ({totalLoads} load{totalLoads !== 1 ? 's' : ''})</span>
+              <span className="font-medium text-gray-800">${fmt(totalDelivery)}</span>
+            </div>
+          )}
 
           {/* Tax rate */}
           <div className="flex justify-between items-center text-sm text-gray-600">

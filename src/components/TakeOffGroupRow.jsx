@@ -7,10 +7,7 @@ function itemLineTotal(item) {
   if (item.isWallAssembly) {
     return (item.faceFt * item.pricePerFaceFt) + (item.linearFt * item.pricePerLinearFt);
   }
-  const materialCost = item.quantity * item.unitPrice;
-  const loads = (item.unitsPerLoad && item.quantity > 0)
-    ? Math.ceil(item.quantity / item.unitsPerLoad) : 0;
-  return materialCost + loads * (item.deliveryRate ?? 0);
+  return item.quantity * item.unitPrice;
 }
 
 function fmt(n) {

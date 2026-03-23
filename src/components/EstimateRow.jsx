@@ -30,20 +30,16 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
   const colors = CATEGORY_COLORS[item.category];
   const inherited = isGrouped && isGroupInherited(item);
 
-  // Line total calculation
+  // Line total calculation (material cost only; delivery is summed separately in summary)
   let lineTotal = 0;
   if (item.isWallAssembly) {
     lineTotal = (item.faceFt * item.pricePerFaceFt) + (item.linearFt * item.pricePerLinearFt);
   } else {
-    const materialCost = item.quantity * item.unitPrice;
-    const loads = (item.unitsPerLoad && item.quantity > 0)
-      ? Math.ceil(item.quantity / item.unitsPerLoad) : 0;
-    lineTotal = materialCost + loads * (item.deliveryRate ?? 0);
+    lineTotal = item.quantity * item.unitPrice;
   }
 
   const loads = (!item.isWallAssembly && item.unitsPerLoad && item.quantity > 0)
     ? Math.ceil(item.quantity / item.unitsPerLoad) : 0;
-  const deliveryCost = loads * (item.deliveryRate ?? 0);
   const hasNotes = !!item.notes;
 
   return (
@@ -227,9 +223,6 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
         {/* Line total */}
         <div className="w-24 text-right shrink-0">
           <span className="text-sm font-semibold text-gray-800">${fmt(lineTotal)}</span>
-          {deliveryCost > 0 && (
-            <p className="text-xs text-blue-500 mt-0.5">+${fmt(deliveryCost)} del.</p>
-          )}
           {item.isWallAssembly && item.faceFt > 0 && (
             <p className="text-xs text-gray-400 mt-0.5">
               {fmt(item.faceFt)} ff
