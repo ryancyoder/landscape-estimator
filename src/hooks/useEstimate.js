@@ -406,6 +406,10 @@ export function useEstimate() {
     setEstimate(estimateData);
   }, []);
 
+  const resetEstimate = useCallback(() => {
+    setEstimate({ ...initialEstimate, date: new Date().toISOString().split('T')[0] });
+  }, []);
+
   // ── Plan ─────────────────────────────────────────────────────────────────────
 
   const setPlanImage = useCallback(({ imageDataUrl, imageWidth, imageHeight }) => {
@@ -523,6 +527,7 @@ export function useEstimate() {
     updateWallDimensions,
     reorderRows,
     importEstimate,
+    resetEstimate,
     setPlanImage,
     setPlanScale,
     addShape,

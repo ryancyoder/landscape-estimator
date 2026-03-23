@@ -35,6 +35,7 @@ export default function App() {
     updateWallDimensions,
     reorderRows,
     importEstimate,
+    resetEstimate,
     setPlanImage,
     setPlanScale,
     addShape,
@@ -188,6 +189,19 @@ export default function App() {
             <h1 className="text-lg font-bold tracking-tight">Landscape Estimator</h1>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (window.confirm('Start a new estimate? All current work will be cleared.')) resetEstimate();
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-green-700 hover:bg-green-600
+                         rounded-lg text-sm font-medium transition-colors"
+              title="New estimate"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              New
+            </button>
             <button
               onClick={() => setPlanOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 bg-green-700 hover:bg-green-600
