@@ -5,6 +5,21 @@ import { ITEM_TYPES } from './PlanCanvas';
 // Categories where all items share a single delivery rate
 const UNIVERSAL_DELIVERY_CATEGORIES = ['bulk_materials'];
 
+const UNIT_OPTIONS = [
+  { value: 'sq ft',  label: 'Sq Ft'  },
+  { value: 'lin ft', label: 'Lin Ft' },
+  { value: 'fc ft',  label: 'Fc Ft'  },
+  { value: 'cu yd',  label: 'Cu Yd'  },
+  { value: 'ea',     label: 'Ea'     },
+  { value: 'hr',     label: 'Hr'     },
+  { value: 'day',    label: 'Day'    },
+];
+
+const TAKEOFF_UNIT_OPTIONS = [
+  { value: 'sq ft',  label: 'Sq Ft'  },
+  { value: 'lin ft', label: 'Lin Ft' },
+];
+
 function Cell({ children }) {
   return <td className="py-2.5 pr-3 align-middle">{children}</td>;
 }
@@ -53,9 +68,9 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
 
   const handleSave = useCallback(async () => {
     setSaveState('saving');
-    const ok = await onSave();
-    setSaveState(ok ? 'saved' : 'idle');
-    if (ok) setTimeout(() => setSaveState('idle'), 2000);
+    await onSave();
+    setSaveState('saved');
+    setTimeout(() => setSaveState('idle'), 2000);
   }, [onSave]);
 
   const categoryItems = items.filter(i => i.category === activeCategory);
@@ -93,7 +108,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center overflow-y-auto py-8 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -193,7 +208,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
           <table className="w-full text-sm border-separate border-spacing-0">
             <thead>
               <tr className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                <th className="text-left pb-3 pr-3">Name</th>
+                <th className="text-left pb-3 pr-3 min-w-[12rem]">Name</th>
                 <th className="text-left pb-3 pr-3 w-24">Unit</th>
                 <th className="text-right pb-3 pr-3 w-28">$/Unit</th>
                 {hasAssemblies && <>
@@ -245,7 +260,16 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     <TextInput value={item.name} onChange={v => onUpdate(item.id, 'name', v)} />
                   </Cell>
                   <Cell>
-                    <TextInput value={item.unit} onChange={v => onUpdate(item.id, 'unit', v)} />
+                    <select
+                      value={item.unit}
+                      onChange={e => onUpdate(item.id, 'unit', e.target.value)}
+                      className="w-full border border-gray-200 rounded px-2 py-1 text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                    >
+                      {UNIT_OPTIONS.map(o => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
                   </Cell>
                   <Cell>
                     <NumberInput value={item.unitPrice} onChange={v => onUpdate(item.id, 'unitPrice', v)} step="0.01" prefix="$" />
@@ -262,7 +286,16 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </td>
                     <Cell>
                       {item.isAssembly
-                        ? <TextInput value={item.takeoffUnit ?? 'sq ft'} onChange={v => onUpdate(item.id, 'takeoffUnit', v)} />
+                        ? <select
+                            value={item.takeoffUnit ?? 'sq ft'}
+                            onChange={e => onUpdate(item.id, 'takeoffUnit', e.target.value)}
+                            className="w-full border border-gray-200 rounded px-2 py-1 text-sm
+                                       focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                          >
+                            {TAKEOFF_UNIT_OPTIONS.map(o => (
+                              <option key={o.value} value={o.value}>{o.label}</option>
+                            ))}
+                          </select>
                         : <Dash />}
                     </Cell>
                     <Cell>
@@ -332,8 +365,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                   <td className="py-2.5 align-middle">
                     <button
                       onClick={() => onRemove(item.id)}
-                      className="p-1.5 rounded text-gray-300 hover:text-red-500 hover:bg-red-50
-                                 opacity-0 group-hover:opacity-100 transition-all"
+                      className="p-1.5 rounded text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
                       title="Remove item"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
