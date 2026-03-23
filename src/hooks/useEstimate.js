@@ -173,7 +173,9 @@ function applyGroupTakeoff(item, group) {
   }
   if (item.isAssembly) {
     const takeoffQty = item.takeoffUnit === 'lin ft' ? group.linearFt : group.sqFt;
-    return { ...item, takeoffQty, quantity: item.coverageRate ? takeoffQty / item.coverageRate : takeoffQty };
+    const rawQty = item.coverageRate ? takeoffQty / item.coverageRate : takeoffQty;
+    const quantity = item.roundTo > 0 ? Math.round(rawQty / item.roundTo) * item.roundTo : rawQty;
+    return { ...item, takeoffQty, quantity };
   }
   if (item.unit === 'sq ft')  return { ...item, quantity: group.sqFt };
   if (item.unit === 'lin ft') return { ...item, quantity: group.linearFt };
@@ -212,6 +214,7 @@ function buildItem(catalogItem, groupId = null) {
       isAssembly: true,
       takeoffUnit: catalogItem.takeoffUnit,
       coverageRate: catalogItem.coverageRate,
+      roundTo: catalogItem.roundTo ?? null,
       takeoffQty: 0,
       ...(catalogItem.unitsPerLoad && {
         unitsPerLoad: catalogItem.unitsPerLoad,

@@ -421,7 +421,6 @@ function CatalogDragOverlay({ item }) {
           <p className={`font-medium text-sm leading-tight ${colors.text}`}>
             {item.name}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5 truncate">{item.description}</p>
         </div>
         <div className="shrink-0 text-right">
           <p className={`text-xs font-semibold ${colors.text}`}>

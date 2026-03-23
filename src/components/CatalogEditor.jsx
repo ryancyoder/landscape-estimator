@@ -75,9 +75,10 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
 
   const categoryItems = items.filter(i => i.category === activeCategory);
   const hasAssemblies = categoryItems.some(i => i.isAssembly);
-  const hasUnitsPerLoad = categoryItems.some(i => i.unitsPerLoad != null);
+  const isBulkMaterials = activeCategory === 'bulk_materials';
+  const hasUnitsPerLoad = isBulkMaterials && categoryItems.some(i => i.unitsPerLoad != null);
   const isUniversalDelivery = UNIVERSAL_DELIVERY_CATEGORIES.includes(activeCategory);
-  const hasPerItemDelivery = !isUniversalDelivery && categoryItems.some(i => i.deliveryRate != null);
+  const hasPerItemDelivery = isBulkMaterials && !isUniversalDelivery && categoryItems.some(i => i.deliveryRate != null);
   const hasWallAssemblies = categoryItems.some(i => i.isWallAssembly);
   const isPlantsCategory = activeCategory === 'plants';
   const isItemsCategory = activeCategory !== 'plants';
@@ -99,7 +100,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
 
   // Total column count for the colspan on the Add row
   const colCount = 3
-    + (hasAssemblies ? 3 : 0)   // checkbox + takeoffUnit + coverageRate
+    + (hasAssemblies ? 4 : 0)   // checkbox + takeoffUnit + coverageRate + roundTo
     + (hasUnitsPerLoad ? 1 : 0)
     + (hasPerItemDelivery ? 1 : 0)
     + (hasWallAssemblies ? 2 : 0)
@@ -217,10 +218,11 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                 {hasAssemblies && <>
                   <th className="text-center pb-3 pr-3 w-10">Asm</th>
                   <th className="text-left pb-3 pr-3 w-28">Takeoff Unit</th>
-                  <th className="text-right pb-3 pr-3 w-36">
-                    Coverage Rate
+                  <th className="text-right pb-3 pr-3 w-24">Cvg Rate</th>
+                  <th className="text-right pb-3 pr-3 w-28">
+                    Round To
                     <span className="block text-gray-300 normal-case tracking-normal font-normal">
-                      takeoff units / billing unit
+                      billing units
                     </span>
                   </th>
                 </>}
@@ -322,6 +324,11 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     <Cell>
                       {item.isAssembly
                         ? <NumberInput value={item.coverageRate ?? 1} onChange={v => onUpdate(item.id, 'coverageRate', v)} min={0.01} step="any" />
+                        : <Dash />}
+                    </Cell>
+                    <Cell>
+                      {item.isAssembly
+                        ? <NumberInput value={item.roundTo ?? ''} onChange={v => onUpdate(item.id, 'roundTo', v || null)} min={0.01} step="any" />
                         : <Dash />}
                     </Cell>
                   </>}
