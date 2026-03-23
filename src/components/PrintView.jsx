@@ -136,7 +136,7 @@ export default function PrintView({ estimate, subtotal, taxAmount, total }) {
                         <span className="text-xs text-indigo-600">{row.sqFt.toLocaleString()} sq ft</span>
                       )}
                       {row.linearFt > 0 && (
-                        <span className="text-xs text-indigo-600">{row.linearFt.toLocaleString()} lin ft</span>
+                        <span className="text-xs text-indigo-600">{row.linearFt.toLocaleString()} ln ft</span>
                       )}
                       {row.linearFt > 0 && row.height > 0 && (
                         <span className="text-xs text-indigo-600">

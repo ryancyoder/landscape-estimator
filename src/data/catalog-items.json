@@ -177,7 +177,7 @@
     "name": "Clean 8 (French Drain)",
     "category": "bulk_materials",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 30,
     "unit": "ton",
     "unitPrice": 37.5,
@@ -229,9 +229,9 @@
     "name": "Metal Edging",
     "category": "standard_materials",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 1,
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 2.5
   },
   {
@@ -239,7 +239,7 @@
     "name": "Perma Edge",
     "category": "standard_materials",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 80,
     "unit": "pail",
     "unitPrice": 32
@@ -249,9 +249,9 @@
     "name": "Spade Edging",
     "category": "edging",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 1,
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 1.5,
     "unitsPerLoad": 500,
     "deliveryRate": 0
@@ -261,9 +261,9 @@
     "name": "Steel Edging",
     "category": "edging",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 1,
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 4.5,
     "unitsPerLoad": 200,
     "deliveryRate": 0
@@ -273,9 +273,9 @@
     "name": "Paver Edging",
     "category": "edging",
     "isAssembly": true,
-    "takeoffUnit": "lin ft",
+    "takeoffUnit": "ln ft",
     "coverageRate": 1,
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 6.5,
     "unitsPerLoad": 100,
     "deliveryRate": 0
@@ -429,7 +429,7 @@
     "id": "d1",
     "name": "French Drain",
     "category": "drainage",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 18
   },
   {
@@ -443,21 +443,21 @@
     "id": "d3",
     "name": "Drain Pipe 4\"",
     "category": "drainage",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 6.5
   },
   {
     "id": "d4",
     "name": "Drain Pipe 6\"",
     "category": "drainage",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 9
   },
   {
     "id": "d5",
     "name": "Channel Drain",
     "category": "drainage",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 32
   },
   {
@@ -478,7 +478,7 @@
     "id": "d8",
     "name": "Downspout Extension",
     "category": "drainage",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 8
   },
   {
@@ -527,7 +527,7 @@
     "id": "li7",
     "name": "Landscape Wire",
     "category": "lighting",
-    "unit": "lin ft",
+    "unit": "ln ft",
     "unitPrice": 1.25
   },
   {

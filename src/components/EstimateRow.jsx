@@ -93,7 +93,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
                       {Math.round(item.linearFt)}
                     </div>
-                    <p className="text-xs text-center text-indigo-400 mt-0.5">lin ft ↑</p>
+                    <p className="text-xs text-center text-indigo-400 mt-0.5">ln ft ↑</p>
                   </>
                 ) : (
                   <>
@@ -107,7 +107,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                                  focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent"
                       title="Linear feet"
                     />
-                    <p className="text-xs text-center text-gray-400 mt-0.5">lin ft</p>
+                    <p className="text-xs text-center text-gray-400 mt-0.5">ln ft</p>
                   </>
                 )}
               </div>

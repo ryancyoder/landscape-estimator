@@ -8,7 +8,7 @@ const UNIT_OVERRIDES = {
   bulk_materials:     { unit: 'cu yd' },
   standard_materials: { unit: 'sq ft' },
   lawn:               { unit: 'sq ft' },
-  edging:             { unit: 'lin ft' },
+  edging:             { unit: 'ln ft' },
 };
 
 export function useCatalog() {

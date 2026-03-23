@@ -7,17 +7,20 @@ const UNIVERSAL_DELIVERY_CATEGORIES = ['bulk_materials'];
 
 const UNIT_OPTIONS = [
   { value: 'sq ft',  label: 'Sq Ft'  },
-  { value: 'lin ft', label: 'Lin Ft' },
+  { value: 'ln ft',  label: 'Ln Ft'  },
   { value: 'fc ft',  label: 'Fc Ft'  },
   { value: 'cu yd',  label: 'Cu Yd'  },
   { value: 'ea',     label: 'Ea'     },
+  { value: 'bag',    label: 'Bag'    },
+  { value: 'roll',   label: 'Roll'   },
+  { value: 'plt',    label: 'Plt'    },
   { value: 'hr',     label: 'Hr'     },
   { value: 'day',    label: 'Day'    },
 ];
 
 const TAKEOFF_UNIT_OPTIONS = [
   { value: 'sq ft',  label: 'Sq Ft'  },
-  { value: 'lin ft', label: 'Lin Ft' },
+  { value: 'ln ft',  label: 'Ln Ft'  },
 ];
 
 function Cell({ children }) {
@@ -210,15 +213,15 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
             <thead>
               <tr className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 <th className="text-left pb-3 pr-3 min-w-[12rem]">Name</th>
-                <th className="text-left pb-3 pr-3 w-24">Unit</th>
+                <th className="text-left pb-3 pr-3 w-24">Billing<span className="block">Unit</span></th>
                 {isItemsCategory && (
                   <th className="text-center pb-3 pr-3 w-12">Sym</th>
                 )}
                 <th className="text-right pb-3 pr-3 w-28">$/Unit</th>
                 {hasAssemblies && <>
                   <th className="text-center pb-3 pr-3 w-10">Asm</th>
-                  <th className="text-left pb-3 pr-3 w-28">Takeoff Unit</th>
-                  <th className="text-right pb-3 pr-3 w-24">Cvg Rate</th>
+                  <th className="text-left pb-3 pr-3 w-28">Take Off<span className="block">Unit</span></th>
+                  <th className="text-right pb-3 pr-3 w-24">Coverage<span className="block">Rate</span></th>
                   <th className="text-right pb-3 pr-3 w-28">
                     Round To
                     <span className="block text-gray-300 normal-case tracking-normal font-normal">

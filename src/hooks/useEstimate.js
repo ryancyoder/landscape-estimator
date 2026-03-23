@@ -172,20 +172,20 @@ function applyGroupTakeoff(item, group) {
     return { ...item, linearFt: group.linearFt, height: group.height, faceFt: group.linearFt * group.height };
   }
   if (item.isAssembly) {
-    const takeoffQty = item.takeoffUnit === 'lin ft' ? group.linearFt : group.sqFt;
+    const takeoffQty = item.takeoffUnit === 'ln ft' ? group.linearFt : group.sqFt;
     const rawQty = item.coverageRate ? takeoffQty / item.coverageRate : takeoffQty;
     const quantity = item.roundTo > 0 ? Math.round(rawQty / item.roundTo) * item.roundTo : rawQty;
     return { ...item, takeoffQty, quantity };
   }
   if (item.unit === 'sq ft')  return { ...item, quantity: group.sqFt };
-  if (item.unit === 'lin ft') return { ...item, quantity: group.linearFt };
+  if (item.unit === 'ln ft') return { ...item, quantity: group.linearFt };
   return item; // ea / hr / day — user keeps editing qty
 }
 
 // Does this item type have its takeoff inherited from the group?
 export function isGroupInherited(item) {
   return item.isWallAssembly || item.isAssembly ||
-         item.unit === 'sq ft' || item.unit === 'lin ft';
+         item.unit === 'sq ft' || item.unit === 'ln ft';
 }
 
 function itemLineTotal(item) {

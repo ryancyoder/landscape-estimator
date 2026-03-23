@@ -144,7 +144,7 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
         {!group.isPlantsGroup && !group.isItemsGroup && (
           <div className="hidden print:flex items-center gap-4 text-xs text-indigo-600 shrink-0">
             {group.sqFt > 0 && <span>{group.sqFt} sq ft</span>}
-            {group.linearFt > 0 && <span>{group.linearFt} lin ft</span>}
+            {group.linearFt > 0 && <span>{group.linearFt} ln ft</span>}
             {faceFt > 0 && <span>{faceFt.toLocaleString()} face ft</span>}
           </div>
         )}

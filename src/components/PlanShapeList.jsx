@@ -31,7 +31,7 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
         <p className="text-xs font-semibold text-gray-700 truncate">
           {shape.type === 'area'
             ? `${Math.round(shape.measurement).toLocaleString()} sq ft`
-            : `${Math.round(shape.measurement).toLocaleString()} lin ft`}
+            : `${Math.round(shape.measurement).toLocaleString()} ln ft`}
         </p>
         <p className="text-[10px] text-gray-400">{shape.type === 'area' ? 'Area' : 'Linear'}</p>
       </div>

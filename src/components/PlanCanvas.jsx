@@ -356,7 +356,7 @@ export default function PlanCanvas({
       } else if (shape.type === 'linear' && pts.length >= 2) {
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach(p => ctx.lineTo(p.x, p.y)); ctx.stroke();
         const mid = pts[Math.floor(pts.length / 2)];
-        drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} lin ft`, mid.x, mid.y - 10, shape.color);
+        drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} ln ft`, mid.x, mid.y - 10, shape.color);
         if (shape.groupId) { const g = groups.find(gr => gr.id === shape.groupId); if (g) drawLabel(ctx, g.label, mid.x, mid.y + 6, shape.color); }
       }
       pts.forEach(p => { ctx.fillStyle = shape.color; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill(); });

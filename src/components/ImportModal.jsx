@@ -178,7 +178,7 @@ TRANSCRIPT:
                     <span className="text-xs text-indigo-500">
                       {group.sqFt > 0 && `${group.sqFt} sq ft`}
                       {group.sqFt > 0 && group.linearFt > 0 && ' · '}
-                      {group.linearFt > 0 && `${group.linearFt} lin ft`}
+                      {group.linearFt > 0 && `${group.linearFt} ln ft`}
                       {group.height > 0 && ` · ${group.height}' ht`}
                     </span>
                   </div>
