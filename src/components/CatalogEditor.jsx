@@ -77,7 +77,8 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
   }, [onSave]);
 
   const categoryItems = items.filter(i => i.category === activeCategory);
-  const hasAssemblies = categoryItems.some(i => i.isAssembly);
+  const ASSEMBLY_CATEGORIES = ['bulk_materials', 'standard_materials', 'lawn', 'edging', 'drainage', 'hardscape', 'lighting'];
+  const hasAssemblies = categoryItems.some(i => i.isAssembly) || ASSEMBLY_CATEGORIES.includes(activeCategory);
   const isBulkMaterials = activeCategory === 'bulk_materials';
   const hasUnitsPerLoad = isBulkMaterials && categoryItems.some(i => i.unitsPerLoad != null);
   const isUniversalDelivery = UNIVERSAL_DELIVERY_CATEGORIES.includes(activeCategory);
@@ -123,6 +124,16 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {!import.meta.env.DEV && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200">
+                <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                <span className="text-xs text-amber-700 font-medium">
+                  Changes are session-only — run locally to save permanently
+                </span>
+              </div>
+            )}
             <button
               onClick={handleSave}
               disabled={saveState === 'saving'}

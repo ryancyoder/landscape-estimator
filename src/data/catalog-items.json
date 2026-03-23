@@ -40,16 +40,16 @@
   },
   {
     "id": "p6",
-    "name": "Ground Cover",
+    "name": "Ground Cover (flat)",
     "category": "plants",
-    "unit": "sq ft",
+    "unit": "ea",
     "unitPrice": 3.5
   },
   {
     "id": "p7",
     "name": "Plant Allowance",
     "category": "plants",
-    "unit": "sq ft",
+    "unit": "ea",
     "unitPrice": 5
   },
   {
@@ -156,9 +156,10 @@
     "takeoffUnit": "sq ft",
     "coverageRate": 80,
     "unit": "ton",
-    "unitPrice": 300,
+    "unitPrice": 224,
     "unitsPerLoad": 5,
-    "deliveryRate": 0
+    "deliveryRate": 0,
+    "roundTo": 5
   },
   {
     "id": "custom-bulk_materials-1773872429448-3",
@@ -190,9 +191,10 @@
     "category": "standard_materials",
     "isAssembly": true,
     "takeoffUnit": "sq ft",
-    "coverageRate": 1500,
+    "coverageRate": 1800,
     "unit": "roll",
-    "unitPrice": 562
+    "unitPrice": 392,
+    "roundTo": 0.25
   },
   {
     "id": "sm1",
@@ -245,89 +247,31 @@
     "unitPrice": 32
   },
   {
-    "id": "ed1",
-    "name": "Spade Edging",
-    "category": "edging",
-    "isAssembly": true,
-    "takeoffUnit": "ln ft",
-    "coverageRate": 1,
-    "unit": "ln ft",
-    "unitPrice": 1.5,
-    "unitsPerLoad": 500,
-    "deliveryRate": 0
-  },
-  {
     "id": "ed2",
     "name": "Steel Edging",
     "category": "edging",
     "isAssembly": true,
     "takeoffUnit": "ln ft",
     "coverageRate": 1,
-    "unit": "ln ft",
-    "unitPrice": 4.5,
-    "unitsPerLoad": 200,
-    "deliveryRate": 0
-  },
-  {
-    "id": "ed5",
-    "name": "Paver Edging",
-    "category": "edging",
-    "isAssembly": true,
-    "takeoffUnit": "ln ft",
-    "coverageRate": 1,
-    "unit": "ln ft",
-    "unitPrice": 6.5,
-    "unitsPerLoad": 100,
-    "deliveryRate": 0
-  },
-  {
-    "id": "l1",
-    "name": "General Labor",
-    "category": "labor",
-    "unit": "hr",
-    "unitPrice": 65
-  },
-  {
-    "id": "l2",
-    "name": "Machine Operator",
-    "category": "labor",
-    "unit": "hr",
-    "unitPrice": 95
-  },
-  {
-    "id": "l3",
-    "name": "Design Fee",
-    "category": "labor",
     "unit": "ea",
-    "unitPrice": 350
-  },
-  {
-    "id": "l4",
-    "name": "Site Cleanup",
-    "category": "labor",
-    "unit": "hr",
-    "unitPrice": 55
-  },
-  {
-    "id": "l5",
-    "name": "Irrigation Install",
-    "category": "labor",
-    "unit": "hr",
-    "unitPrice": 85
+    "unitPrice": 118,
+    "unitsPerLoad": 200,
+    "deliveryRate": 0,
+    "roundTo": 1
   },
   {
     "id": "l6",
     "name": "3-Man Crew Day",
     "category": "labor",
     "unit": "day",
-    "unitPrice": 2145
+    "unitPrice": 2640
   },
   {
     "id": "l7",
     "name": "4-Man Crew Day",
     "category": "labor",
     "unit": "day",
-    "unitPrice": 2860
+    "unitPrice": 3520
   },
   {
     "id": "h7",
@@ -370,116 +314,40 @@
     "coverageRate": 1
   },
   {
-    "id": "e1",
-    "name": "Skid Steer",
-    "category": "heavy_equipment",
-    "unit": "day",
-    "unitPrice": 425
-  },
-  {
-    "id": "e2",
-    "name": "Mini Excavator",
-    "category": "heavy_equipment",
-    "unit": "day",
-    "unitPrice": 375
-  },
-  {
-    "id": "e8",
-    "name": "Dump Trailer",
-    "category": "heavy_equipment",
-    "unit": "day",
-    "unitPrice": 95
-  },
-  {
-    "id": "e3",
-    "name": "Plate Compactor",
-    "category": "small_equipment",
-    "unit": "day",
-    "unitPrice": 120
-  },
-  {
     "id": "e4",
     "name": "Sod Cutter",
     "category": "small_equipment",
     "unit": "day",
-    "unitPrice": 145
-  },
-  {
-    "id": "e5",
-    "name": "Aerator",
-    "category": "small_equipment",
-    "unit": "day",
-    "unitPrice": 110
-  },
-  {
-    "id": "e6",
-    "name": "Stump Grinder",
-    "category": "small_equipment",
-    "unit": "day",
-    "unitPrice": 225
-  },
-  {
-    "id": "e7",
-    "name": "Trencher",
-    "category": "small_equipment",
-    "unit": "day",
-    "unitPrice": 185
-  },
-  {
-    "id": "d1",
-    "name": "French Drain",
-    "category": "drainage",
-    "unit": "ln ft",
-    "unitPrice": 18
-  },
-  {
-    "id": "d2",
-    "name": "Catch Basin",
-    "category": "drainage",
-    "unit": "ea",
-    "unitPrice": 285
+    "unitPrice": 128
   },
   {
     "id": "d3",
-    "name": "Drain Pipe 4\"",
+    "name": "4\" Solid Drain Pipe",
     "category": "drainage",
-    "unit": "ln ft",
-    "unitPrice": 6.5
+    "unit": "roll",
+    "unitPrice": 108,
+    "isAssembly": true,
+    "takeoffUnit": "ln ft",
+    "coverageRate": 100,
+    "roundTo": 1
   },
   {
     "id": "d4",
-    "name": "Drain Pipe 6\"",
+    "name": "4\" Slotted Drain Pipe",
     "category": "drainage",
-    "unit": "ln ft",
-    "unitPrice": 9
-  },
-  {
-    "id": "d5",
-    "name": "Channel Drain",
-    "category": "drainage",
-    "unit": "ln ft",
-    "unitPrice": 32
-  },
-  {
-    "id": "d6",
-    "name": "Pop-up Emitter",
-    "category": "drainage",
-    "unit": "ea",
-    "unitPrice": 45
-  },
-  {
-    "id": "d7",
-    "name": "Dry Well",
-    "category": "drainage",
-    "unit": "ea",
-    "unitPrice": 650
+    "unit": "roll",
+    "unitPrice": 206,
+    "isAssembly": true,
+    "takeoffUnit": "ln ft",
+    "coverageRate": 100,
+    "roundTo": 1
   },
   {
     "id": "d8",
-    "name": "Downspout Extension",
+    "name": "Window Well ",
     "category": "drainage",
-    "unit": "ln ft",
-    "unitPrice": 8
+    "unit": "ea",
+    "unitPrice": 75
   },
   {
     "id": "li1",
@@ -536,5 +404,43 @@
     "category": "lighting",
     "unit": "ea",
     "unitPrice": 200
+  },
+  {
+    "id": "custom-heavy_equipment-1774303698062-1",
+    "name": "MT-100 w/ Attachments",
+    "category": "heavy_equipment",
+    "unit": "day",
+    "unitPrice": 648,
+    "description": ""
+  },
+  {
+    "id": "custom-drainage-1774304331719-1",
+    "name": "Downspout Assembly ",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 83,
+    "description": ""
+  },
+  {
+    "id": "custom-drainage-1774304410586-1",
+    "name": "Pop Up Emitter",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 42,
+    "description": "",
+    "isAssembly": false,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 1
+  },
+  {
+    "id": "custom-drainage-1774304973988-1",
+    "name": "Misc. Drainage Parts",
+    "category": "drainage",
+    "unit": "ea",
+    "unitPrice": 1,
+    "description": "",
+    "isAssembly": false,
+    "takeoffUnit": "sq ft",
+    "coverageRate": 1
   }
 ]

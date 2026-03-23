@@ -1,4 +1,4 @@
-export const CATEGORIES = ['plants', 'lawn', 'bulk_materials', 'standard_materials', 'edging', 'labor', 'hardscape', 'heavy_equipment', 'small_equipment', 'drainage', 'lighting'];
+export const CATEGORIES = ['plants', 'lawn', 'bulk_materials', 'standard_materials', 'edging', 'labor', 'hardscape', 'heavy_equipment', 'small_equipment', 'drainage', 'lighting', 'logistics'];
 
 export const CATEGORY_LABELS = {
   plants:    'Plants',
@@ -12,6 +12,7 @@ export const CATEGORY_LABELS = {
   small_equipment: 'Small Equipment',
   drainage:        'Drainage',
   lighting:  'Lighting',
+  logistics: 'Logistics',
 };
 
 export const CATEGORY_COLORS = {
@@ -26,6 +27,7 @@ export const CATEGORY_COLORS = {
   small_equipment: { bg: 'bg-rose-100',   text: 'text-rose-800',   badge: 'bg-rose-200',   border: 'border-rose-300',   dot: 'bg-rose-500' },
   drainage:  { bg: 'bg-cyan-100',   text: 'text-cyan-800',   badge: 'bg-cyan-200',   border: 'border-cyan-300',   dot: 'bg-cyan-500' },
   lighting:  { bg: 'bg-yellow-100', text: 'text-yellow-800', badge: 'bg-yellow-200', border: 'border-yellow-300', dot: 'bg-yellow-500' },
+  logistics: { bg: 'bg-slate-100',  text: 'text-slate-800',  badge: 'bg-slate-200',  border: 'border-slate-300',  dot: 'bg-slate-500'  },
 };
 
 import catalogItems from './catalog-items.json';

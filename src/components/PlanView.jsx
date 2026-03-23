@@ -34,6 +34,7 @@ export default function PlanView({
   const [selectedItemCatalogId, setSelectedItemCatalogId] = useState(null);
   const [calPoints, setCalPoints] = useState([]);
   const [showCalLine, setShowCalLine] = useState(false);
+  const [showMeasurements, setShowMeasurements] = useState(true);
 
   const plantable = (catalogPlants ?? []).filter(c => c.planSymbol);
   const itemable = (catalogItems ?? []).filter(c => c.itemSymbol);
@@ -101,6 +102,20 @@ export default function PlanView({
         <ToolBtn label="Item"      icon={icons.item}      active={activeTool === 'item'}      onClick={() => setActiveTool('item')} />
         <ToolBtn label="Select"    icon={icons.select}    active={activeTool === 'select'}    onClick={() => setActiveTool('select')} />
         <div className="flex-1" />
+        <button
+          onClick={() => setShowMeasurements(v => !v)}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors
+            ${showMeasurements ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-700'}`}
+          title={showMeasurements ? 'Hide takeoff numbers' : 'Show takeoff numbers'}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {showMeasurements
+              ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+              : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+            }
+          </svg>
+          {showMeasurements ? '123' : '···'}
+        </button>
         <span className="text-xs text-gray-500 hidden sm:block">{toolHints[activeTool]}</span>
       </div>
 
@@ -167,6 +182,7 @@ export default function PlanView({
           groups={groups}
           activeTool={activeTool}
           showCalLine={showCalLine}
+          showMeasurements={showMeasurements}
           catalogPlants={catalogPlants}
           selectedPlantId={selectedPlantId}
           onPlantIdChange={setSelectedPlantId}

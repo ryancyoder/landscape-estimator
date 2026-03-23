@@ -240,7 +240,7 @@ function drawLabel(ctx, text, x, y, color) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function PlanCanvas({
-  plan, groups, activeTool, showCalLine,
+  plan, groups, activeTool, showCalLine, showMeasurements = true,
   catalogPlants, selectedPlantId, onPlantIdChange, onAddPlant, onRemovePlant,
   catalogItems, selectedItemCatalogId, onItemCatalogIdChange, onAddItemPlacement, onRemoveItemPlacement,
   onCalibrationPointsSet, onShapeComplete, onUpdateShape, onRemoveShape,
@@ -351,13 +351,13 @@ export default function PlanCanvas({
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath();
         ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.18)`; ctx.fill(); ctx.stroke();
         const c = centroid(pts);
-        drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} sq ft`, c.x, c.y, shape.color);
-        if (shape.groupId) { const g = groups.find(gr => gr.id === shape.groupId); if (g) drawLabel(ctx, g.label, c.x, c.y + 18, shape.color); }
+        if (showMeasurements) drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} sq ft`, c.x, c.y, shape.color);
+        if (shape.groupId) { const g = groups.find(gr => gr.id === shape.groupId); if (g) drawLabel(ctx, g.label, c.x, c.y + (showMeasurements ? 18 : 0), shape.color); }
       } else if (shape.type === 'linear' && pts.length >= 2) {
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach(p => ctx.lineTo(p.x, p.y)); ctx.stroke();
         const mid = pts[Math.floor(pts.length / 2)];
-        drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} ln ft`, mid.x, mid.y - 10, shape.color);
-        if (shape.groupId) { const g = groups.find(gr => gr.id === shape.groupId); if (g) drawLabel(ctx, g.label, mid.x, mid.y + 6, shape.color); }
+        if (showMeasurements) drawLabel(ctx, `${Math.round(shape.measurement).toLocaleString()} ln ft`, mid.x, mid.y - 10, shape.color);
+        if (shape.groupId) { const g = groups.find(gr => gr.id === shape.groupId); if (g) drawLabel(ctx, g.label, mid.x, mid.y + (showMeasurements ? 6 : -10), shape.color); }
       }
       pts.forEach(p => { ctx.fillStyle = shape.color; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill(); });
     }
@@ -417,7 +417,7 @@ export default function PlanCanvas({
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, groups, canvasSize, inProgressVertices, cursorPos, calPoints, selectedShapeId, selectedPlantInstanceId, selectedItemInstanceId, imageReady, activeTool, catalogPlants, catalogItems, showCalLine]);
+  }, [plan, groups, canvasSize, inProgressVertices, cursorPos, calPoints, selectedShapeId, selectedPlantInstanceId, selectedItemInstanceId, imageReady, activeTool, catalogPlants, catalogItems, showCalLine, showMeasurements]);
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function getCanvasPoint(e) {
