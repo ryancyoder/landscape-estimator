@@ -1,15 +1,39 @@
+import { METACATEGORIES } from '../data/catalog';
+
 function fmt(n) {
   return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function EstimateSummary({ subtotal, taxAmount, total, taxRate, onTaxRateChange, totalLoads, totalDelivery }) {
+const META_LABELS = {
+  MATERIAL:  'Material',
+  LABOR:     'Labor',
+  EQUIPMENT: 'Equipment',
+  LOGISTICS: 'Logistics',
+};
+
+export default function EstimateSummary({ subtotal, metacategoryTotals, taxAmount, total, taxRate, onTaxRateChange, totalLoads, totalDelivery }) {
+  const activeMetas = METACATEGORIES.filter(m => (metacategoryTotals?.[m] ?? 0) > 0);
+
   return (
     <div className="mt-4 flex justify-end">
       <div className="w-72 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+
+        {/* Metacategory breakdown */}
+        {activeMetas.length > 0 && (
+          <div className="px-4 pt-3 pb-2 space-y-1.5 border-b border-gray-100">
+            {activeMetas.map(meta => (
+              <div key={meta} className="flex justify-between text-xs text-gray-500">
+                <span>{META_LABELS[meta]}</span>
+                <span>${fmt(metacategoryTotals[meta])}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="px-4 py-3 space-y-2">
           {/* Subtotal */}
           <div className="flex justify-between text-sm text-gray-600">
-            <span>Materials</span>
+            <span>Subtotal</span>
             <span className="font-medium text-gray-800">${fmt(subtotal)}</span>
           </div>
 

@@ -1,5 +1,22 @@
 export const CATEGORIES = ['plants', 'lawn', 'bulk_materials', 'standard_materials', 'edging', 'labor', 'hardscape', 'heavy_equipment', 'small_equipment', 'drainage', 'lighting', 'logistics'];
 
+export const METACATEGORIES = ['MATERIAL', 'LABOR', 'EQUIPMENT', 'LOGISTICS'];
+
+export const CATEGORY_METACATEGORY = {
+  plants:             'MATERIAL',
+  lawn:               'MATERIAL',
+  bulk_materials:     'MATERIAL',
+  standard_materials: 'MATERIAL',
+  edging:             'MATERIAL',
+  hardscape:          'MATERIAL',
+  drainage:           'MATERIAL',
+  lighting:           'MATERIAL',
+  labor:              'LABOR',
+  heavy_equipment:    'EQUIPMENT',
+  small_equipment:    'EQUIPMENT',
+  logistics:          'LOGISTICS',
+};
+
 export const CATEGORY_LABELS = {
   plants:    'Plants',
   lawn:      'Lawn',

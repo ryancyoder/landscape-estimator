@@ -1,4 +1,11 @@
-import { CATEGORY_LABELS } from '../data/catalog';
+import { METACATEGORIES, CATEGORY_METACATEGORY } from '../data/catalog';
+
+const META_LABELS = {
+  MATERIAL:  'Material',
+  LABOR:     'Labor',
+  EQUIPMENT: 'Equipment',
+  LOGISTICS: 'Logistics',
+};
 
 function fmt(n) {
   return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -11,17 +18,13 @@ function itemLineTotal(item) {
   return item.quantity * item.unitPrice;
 }
 
-function buildCategorySummary(items) {
+function buildMetacategorySummary(items) {
   const map = {};
   for (const item of items) {
-    if (!map[item.category]) map[item.category] = 0;
-    map[item.category] += itemLineTotal(item);
+    const meta = CATEGORY_METACATEGORY[item.category] ?? 'MATERIAL';
+    map[meta] = (map[meta] ?? 0) + itemLineTotal(item);
   }
-  const seen = [];
-  for (const item of items) {
-    if (!seen.includes(item.category)) seen.push(item.category);
-  }
-  return seen.map(cat => ({ category: cat, total: map[cat] }));
+  return METACATEGORIES.filter(m => map[m] > 0).map(m => ({ meta: m, total: map[m] }));
 }
 
 function renderItemRows(item, idx) {
@@ -81,7 +84,7 @@ export default function PrintView({ estimate, subtotal, totalLoads, totalDeliver
   const allItems = estimate.rows.flatMap(row =>
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
-  const categorySummary = buildCategorySummary(allItems);
+  const metacategorySummary = buildMetacategorySummary(allItems);
 
   return (
     <div className="hidden print:block p-8 max-w-4xl mx-auto">
@@ -155,25 +158,23 @@ export default function PrintView({ estimate, subtotal, totalLoads, totalDeliver
       {/* Cost summary by category + totals side by side */}
       <div className="flex justify-between items-start gap-8 mb-8">
 
-        {/* Category breakdown */}
+        {/* Metacategory breakdown */}
         <div className="flex-1">
           <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
-            Cost Summary by Category
+            Cost Summary by Type
           </h2>
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="text-left px-3 py-1.5 text-gray-600 font-semibold">Category</th>
+                <th className="text-left px-3 py-1.5 text-gray-600 font-semibold">Type</th>
                 <th className="text-right px-3 py-1.5 text-gray-600 font-semibold">Amount</th>
               </tr>
             </thead>
             <tbody>
-              {categorySummary.map(({ category, total: catTotal }) => (
-                <tr key={category} className="border-t border-gray-100">
-                  <td className="px-3 py-1.5 text-gray-700">
-                    {CATEGORY_LABELS[category] ?? category}
-                  </td>
-                  <td className="px-3 py-1.5 text-right font-medium">${fmt(catTotal)}</td>
+              {metacategorySummary.map(({ meta, total: metaTotal }) => (
+                <tr key={meta} className="border-t border-gray-100">
+                  <td className="px-3 py-1.5 text-gray-700">{META_LABELS[meta]}</td>
+                  <td className="px-3 py-1.5 text-right font-medium">${fmt(metaTotal)}</td>
                 </tr>
               ))}
             </tbody>

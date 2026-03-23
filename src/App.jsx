@@ -47,6 +47,7 @@ export default function App() {
     addItemPlacement,
     removeItemPlacement,
     subtotal,
+    metacategoryTotals,
     totalLoads,
     totalDelivery,
     taxAmount,
@@ -361,6 +362,7 @@ export default function App() {
               activeGroupId={activeGroupId}
               onSetActiveGroup={setActiveGroupId}
               subtotal={subtotal}
+              metacategoryTotals={metacategoryTotals}
               totalLoads={totalLoads}
               totalDelivery={totalDelivery}
               taxAmount={taxAmount}
@@ -374,6 +376,7 @@ export default function App() {
       <PrintView
         estimate={estimate}
         subtotal={subtotal}
+        metacategoryTotals={metacategoryTotals}
         totalLoads={totalLoads}
         totalDelivery={totalDelivery}
         taxAmount={taxAmount}

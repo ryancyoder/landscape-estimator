@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
+import { METACATEGORIES, CATEGORY_METACATEGORY } from '../data/catalog';
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -612,6 +613,12 @@ export function useEstimate() {
   );
 
   const subtotal = allItems.reduce((sum, item) => sum + itemLineTotal(item), 0);
+  const metacategoryTotals = METACATEGORIES.reduce((acc, meta) => {
+    acc[meta] = allItems
+      .filter(item => (CATEGORY_METACATEGORY[item.category] ?? 'MATERIAL') === meta)
+      .reduce((sum, item) => sum + itemLineTotal(item), 0);
+    return acc;
+  }, {});
   const totalLoads = allItems.reduce((sum, item) => {
     if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
     return sum + Math.ceil(item.quantity / item.unitsPerLoad);
@@ -649,6 +656,7 @@ export function useEstimate() {
     addItemPlacement,
     removeItemPlacement,
     subtotal,
+    metacategoryTotals,
     totalLoads,
     totalDelivery,
     taxAmount,
