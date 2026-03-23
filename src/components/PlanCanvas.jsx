@@ -11,6 +11,18 @@ export const PLANT_TYPES = [
 
 const PLANT_HIT_RADIUS = { 'shade-tree': 24, 'evergreen': 20, 'shrub': 14, 'perennial': 11 };
 
+// ── Item types (exported so PlanView + PlanShapeList + CatalogEditor can share) ──
+
+export const ITEM_TYPES = [
+  { key: 'star',        label: 'Star',        symbol: '★' },
+  { key: 'arrow-left',  label: 'Arrow Left',  symbol: '◄' },
+  { key: 'arrow-right', label: 'Arrow Right', symbol: '►' },
+  { key: 'arrow-up',    label: 'Arrow Up',    symbol: '▲' },
+  { key: 'arrow-down',  label: 'Arrow Down',  symbol: '▼' },
+];
+
+const ITEM_HIT_RADIUS = 16;
+
 // ── Plant drawing ─────────────────────────────────────────────────────────────
 
 function drawPlant(ctx, plantType, x, y, ghost = false) {
@@ -92,6 +104,92 @@ function drawPlantSelected(ctx, plantType, x, y) {
   ctx.setLineDash([]);
 }
 
+// ── Item drawing ──────────────────────────────────────────────────────────────
+
+function drawItem(ctx, itemType, x, y, ghost = false) {
+  ctx.globalAlpha = ghost ? 0.45 : 1;
+  ctx.fillStyle = '#f59e0b';
+  ctx.strokeStyle = '#92400e';
+  ctx.lineWidth = 1.5;
+
+  switch (itemType) {
+    case 'star': {
+      const r = 12, ir = 5, n = 5;
+      ctx.beginPath();
+      for (let i = 0; i < n * 2; i++) {
+        const angle = (i / (n * 2)) * Math.PI * 2 - Math.PI / 2;
+        const radius = i % 2 === 0 ? r : ir;
+        if (i === 0) ctx.moveTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+        else ctx.lineTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+      }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    }
+    case 'arrow-left': {
+      const s = 12;
+      ctx.beginPath();
+      ctx.moveTo(x + s,      y - s * 0.35);
+      ctx.lineTo(x,          y - s * 0.35);
+      ctx.lineTo(x,          y - s * 0.65);
+      ctx.lineTo(x - s,      y);
+      ctx.lineTo(x,          y + s * 0.65);
+      ctx.lineTo(x,          y + s * 0.35);
+      ctx.lineTo(x + s,      y + s * 0.35);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    }
+    case 'arrow-right': {
+      const s = 12;
+      ctx.beginPath();
+      ctx.moveTo(x - s,      y - s * 0.35);
+      ctx.lineTo(x,          y - s * 0.35);
+      ctx.lineTo(x,          y - s * 0.65);
+      ctx.lineTo(x + s,      y);
+      ctx.lineTo(x,          y + s * 0.65);
+      ctx.lineTo(x,          y + s * 0.35);
+      ctx.lineTo(x - s,      y + s * 0.35);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    }
+    case 'arrow-up': {
+      const s = 12;
+      ctx.beginPath();
+      ctx.moveTo(x - s * 0.35, y + s);
+      ctx.lineTo(x - s * 0.35, y);
+      ctx.lineTo(x - s * 0.65, y);
+      ctx.lineTo(x,            y - s);
+      ctx.lineTo(x + s * 0.65, y);
+      ctx.lineTo(x + s * 0.35, y);
+      ctx.lineTo(x + s * 0.35, y + s);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    }
+    case 'arrow-down': {
+      const s = 12;
+      ctx.beginPath();
+      ctx.moveTo(x - s * 0.35, y - s);
+      ctx.lineTo(x - s * 0.35, y);
+      ctx.lineTo(x - s * 0.65, y);
+      ctx.lineTo(x,            y + s);
+      ctx.lineTo(x + s * 0.65, y);
+      ctx.lineTo(x + s * 0.35, y);
+      ctx.lineTo(x + s * 0.35, y - s);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    }
+    default: break;
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawItemSelected(ctx, x, y) {
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.arc(x, y, ITEM_HIT_RADIUS + 6, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
 // ── Coordinate helpers ────────────────────────────────────────────────────────
 
 function getTransform(imageWidth, imageHeight, canvasWidth, canvasHeight) {
@@ -142,8 +240,9 @@ function drawLabel(ctx, text, x, y, color) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function PlanCanvas({
-  plan, groups, activeTool,
+  plan, groups, activeTool, showCalLine,
   catalogPlants, selectedPlantId, onPlantIdChange, onAddPlant, onRemovePlant,
+  catalogItems, selectedItemCatalogId, onItemCatalogIdChange, onAddItemPlacement, onRemoveItemPlacement,
   onCalibrationPointsSet, onShapeComplete, onUpdateShape, onRemoveShape,
 }) {
   const containerRef = useRef(null);
@@ -158,6 +257,7 @@ export default function PlanCanvas({
   const [calPoints, setCalPoints] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState(null);
   const [selectedPlantInstanceId, setSelectedPlantInstanceId] = useState(null);
+  const [selectedItemInstanceId, setSelectedItemInstanceId] = useState(null);
   const [imageReady, setImageReady] = useState(false);
 
   useEffect(() => { inProgressRef.current = []; setInProgressVertices([]); setCursorPos(null); }, [activeTool]);
@@ -168,6 +268,9 @@ export default function PlanCanvas({
   useEffect(() => {
     if (selectedPlantInstanceId && !plan.plants.find(p => p.id === selectedPlantInstanceId)) setSelectedPlantInstanceId(null);
   }, [plan.plants, selectedPlantInstanceId]);
+  useEffect(() => {
+    if (selectedItemInstanceId && !(plan.items ?? []).find(p => p.id === selectedItemInstanceId)) setSelectedItemInstanceId(null);
+  }, [plan.items, selectedItemInstanceId]);
 
   useEffect(() => {
     if (!plan.imageDataUrl) { imageRef.current = null; setImageReady(false); return; }
@@ -212,7 +315,7 @@ export default function PlanCanvas({
     ctx.drawImage(imageRef.current, t.offsetX, t.offsetY, plan.imageWidth * t.scale, plan.imageHeight * t.scale);
 
     // Calibration line from stored scale
-    if (plan.scale) {
+    if (plan.scale && showCalLine) {
       const cp0 = toCanvas(plan.scale.p1, t), cp1 = toCanvas(plan.scale.p2, t);
       ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(cp0.x, cp0.y); ctx.lineTo(cp1.x, cp1.y); ctx.stroke();
@@ -296,8 +399,25 @@ export default function PlanCanvas({
         drawPlant(ctx, selectedCat.planSymbol, cursor.x, cursor.y, true);
       }
     }
+
+    // Items
+    const planItems = plan.items ?? [];
+    for (const item of planItems) {
+      const pt = toCanvas(item, t);
+      if (item.id === selectedItemInstanceId) drawItemSelected(ctx, pt.x, pt.y);
+      drawItem(ctx, item.itemSymbol, pt.x, pt.y);
+    }
+
+    // Ghost item at cursor when item tool is active
+    if (activeTool === 'item' && cursorPos) {
+      const selectedCat = (catalogItems ?? []).find(c => c.id === selectedItemCatalogId);
+      if (selectedCat?.itemSymbol) {
+        const cursor = toCanvas(cursorPos, t);
+        drawItem(ctx, selectedCat.itemSymbol, cursor.x, cursor.y, true);
+      }
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, groups, canvasSize, inProgressVertices, cursorPos, calPoints, selectedShapeId, selectedPlantInstanceId, imageReady, activeTool, catalogPlants]);
+  }, [plan, groups, canvasSize, inProgressVertices, cursorPos, calPoints, selectedShapeId, selectedPlantInstanceId, selectedItemInstanceId, imageReady, activeTool, catalogPlants, catalogItems, showCalLine]);
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function getCanvasPoint(e) {
@@ -352,6 +472,12 @@ export default function PlanCanvas({
         onAddPlant({ catalogId: selectedPlantId, planSymbol: selectedCat.planSymbol, x: imgPt.x, y: imgPt.y });
       }
 
+    } else if (activeTool === 'item') {
+      const selectedCat = (catalogItems ?? []).find(c => c.id === selectedItemCatalogId);
+      if (selectedCat?.itemSymbol) {
+        onAddItemPlacement({ catalogId: selectedItemCatalogId, itemSymbol: selectedCat.itemSymbol, x: imgPt.x, y: imgPt.y });
+      }
+
     } else if (activeTool === 'select') {
       // Hit-test shapes
       let foundShape = null;
@@ -372,8 +498,18 @@ export default function PlanCanvas({
           if (dist(cp, pt) < (PLANT_HIT_RADIUS[plant.planSymbol] ?? 16) + 4) { foundPlant = plant.id; break; }
         }
       }
+      // Hit-test items
+      let foundItem = null;
+      if (!foundShape && !foundPlant) {
+        for (let i = (plan.items ?? []).length - 1; i >= 0; i--) {
+          const item = plan.items[i];
+          const pt = toCanvas(item, t);
+          if (dist(cp, pt) < ITEM_HIT_RADIUS + 4) { foundItem = item.id; break; }
+        }
+      }
       setSelectedShapeId(foundShape);
       setSelectedPlantInstanceId(foundPlant);
+      setSelectedItemInstanceId(foundItem);
     }
   }
 
@@ -400,6 +536,20 @@ export default function PlanCanvas({
       }
     }
 
+    // Item shortcuts when item tool is active
+    if (activeTool === 'item') {
+      const itemable = (catalogItems ?? []).filter(c => c.itemSymbol);
+      const idx = parseInt(e.key) - 1;
+      if (idx >= 0 && idx < itemable.length) { onItemCatalogIdChange(itemable[idx].id); return; }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const cur = itemable.findIndex(c => c.id === selectedItemCatalogId);
+        const next = itemable[(cur + 1) % itemable.length];
+        if (next) onItemCatalogIdChange(next.id);
+        return;
+      }
+    }
+
     if (e.key === 'Enter') {
       const verts = [...inProgressRef.current];
       if (activeTool === 'area' && verts.length >= 3) {
@@ -414,6 +564,7 @@ export default function PlanCanvas({
     } else if (e.key === 'Delete' || e.key === 'Backspace') {
       if (selectedShapeId) { e.preventDefault(); onRemoveShape(selectedShapeId); setSelectedShapeId(null); }
       else if (selectedPlantInstanceId) { e.preventDefault(); onRemovePlant(selectedPlantInstanceId); setSelectedPlantInstanceId(null); }
+      else if (selectedItemInstanceId) { e.preventDefault(); onRemoveItemPlacement(selectedItemInstanceId); setSelectedItemInstanceId(null); }
     }
   }
 

@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
-import { PLANT_TYPES } from './PlanCanvas';
+import { PLANT_TYPES, ITEM_TYPES } from './PlanCanvas';
 
 const PLANT_SYMBOL_MAP = Object.fromEntries(PLANT_TYPES.map(pt => [pt.key, pt]));
+const ITEM_SYMBOL_MAP = Object.fromEntries(ITEM_TYPES.map(it => [it.key, it]));
 
 function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
   const [naming, setNaming] = useState(false);
@@ -98,9 +99,10 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
 }
 
 export default function PlanShapeList({
-  plan, groups, catalogPlants, calPending, calPoints,
+  plan, groups, catalogPlants, catalogItems, calPending, calPoints,
   onSetPlanImage, onSetScale, onResetScale,
   onUpdateShape, onRemoveShape, onAddGroup,
+  showCalLine, onToggleCalLine,
 }) {
   const fileInputRef = useRef(null);
   const [calDistance, setCalDistance] = useState('');
@@ -153,12 +155,26 @@ export default function PlanShapeList({
             <span className="text-xs text-gray-300">
               1 ft = {plan.scale.pixelsPerFoot.toFixed(1)} px
             </span>
-            <button
-              onClick={onResetScale}
-              className="text-xs text-red-400 hover:text-red-300 underline shrink-0"
-            >
-              Reset
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={onToggleCalLine}
+                className={`text-xs transition-colors ${showCalLine ? 'text-yellow-400 hover:text-yellow-300' : 'text-gray-500 hover:text-gray-300'}`}
+                title={showCalLine ? 'Hide calibration line' : 'Show calibration line'}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {showCalLine
+                    ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  }
+                </svg>
+              </button>
+              <button
+                onClick={onResetScale}
+                className="text-xs text-red-400 hover:text-red-300 underline"
+              >
+                Reset
+              </button>
+            </div>
           </div>
         ) : (
           <p className="text-xs text-gray-500">No scale set — use Calibrate tool</p>
@@ -203,6 +219,26 @@ export default function PlanShapeList({
               return (
                 <div key={cat.id} className="flex items-center justify-between">
                   <span className="text-xs text-gray-300">{sym?.symbol ?? '🌱'} {cat.name}</span>
+                  <span className="text-xs font-bold text-white bg-gray-700 px-1.5 py-0.5 rounded-full min-w-[1.4rem] text-center">{count}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Item placement count summary */}
+      {(plan.items ?? []).length > 0 && (
+        <div className="px-3 py-2 border-b border-gray-700">
+          <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Items</p>
+          <div className="flex flex-col gap-1">
+            {(catalogItems ?? []).map(cat => {
+              const count = (plan.items ?? []).filter(p => p.catalogId === cat.id).length;
+              if (!count) return null;
+              const sym = ITEM_SYMBOL_MAP[cat.itemSymbol];
+              return (
+                <div key={cat.id} className="flex items-center justify-between">
+                  <span className="text-xs text-gray-300">{sym?.symbol ?? '★'} {cat.name}</span>
                   <span className="text-xs font-bold text-white bg-gray-700 px-1.5 py-0.5 rounded-full min-w-[1.4rem] text-center">{count}</span>
                 </div>
               );

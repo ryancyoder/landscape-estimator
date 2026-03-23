@@ -188,7 +188,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
               </div>
             ) : (
               <div className="w-20 shrink-0">
-                {item.isPlantItem ? (
+                {(item.isPlantItem || item.isItemPlacement) ? (
                   <>
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700 flex items-center justify-center gap-0.5" title="Controlled by plan">
                       <span>{item.quantity}</span><span className="text-xs">🗺</span>

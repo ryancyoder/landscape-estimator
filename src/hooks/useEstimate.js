@@ -3,7 +3,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 const today = new Date().toISOString().split('T')[0];
 
-const emptyPlan = { imageDataUrl: null, imageWidth: 0, imageHeight: 0, scale: null, shapes: [], plants: [] };
+const emptyPlan = { imageDataUrl: null, imageWidth: 0, imageHeight: 0, scale: null, shapes: [], plants: [], items: [] };
 
 const initialEstimate = {
   projectName: '',
@@ -94,6 +94,54 @@ function syncPlantsGroup(plants, rows, catalogItems = []) {
     sqFt: 0, linearFt: 0, height: 0,
     collapsed: false, notes: '',
     isPlantsGroup: true,
+    items: buildItems(id),
+  }];
+}
+
+// ── Item placement group sync ─────────────────────────────────────────────────
+
+function syncItemsGroup(items, rows, catalogItems = []) {
+  const counts = {};
+  for (const p of items) {
+    if (p.catalogId) counts[p.catalogId] = (counts[p.catalogId] ?? 0) + 1;
+  }
+
+  const existingIdx = rows.findIndex(r => r.type === 'group' && r.isItemsGroup);
+  const existingGroup = existingIdx !== -1 ? rows[existingIdx] : null;
+
+  if (!items.length) {
+    return existingIdx !== -1 ? rows.filter((_, i) => i !== existingIdx) : rows;
+  }
+
+  const buildItems = (groupId) => Object.entries(counts).map(([catalogId, qty]) => {
+    const cat = catalogItems.find(c => c.id === catalogId);
+    const prev = existingGroup?.items.find(i => i.catalogId === catalogId);
+    return {
+      type: 'item',
+      id: prev?.id ?? genId('item'),
+      groupId,
+      catalogId,
+      name: cat?.name ?? prev?.name ?? catalogId,
+      category: cat?.category ?? prev?.category ?? 'labor',
+      unit: cat?.unit ?? 'ea',
+      unitPrice: cat?.unitPrice ?? prev?.unitPrice ?? 0,
+      quantity: qty,
+      notes: prev?.notes ?? '',
+      isItemPlacement: true,
+    };
+  });
+
+  if (existingGroup) {
+    const updated = { ...existingGroup, items: buildItems(existingGroup.id) };
+    return rows.map((r, i) => i === existingIdx ? updated : r);
+  }
+
+  const id = genId('group');
+  return [...rows, {
+    type: 'group', id, label: 'Items',
+    sqFt: 0, linearFt: 0, height: 0,
+    collapsed: false, notes: '',
+    isItemsGroup: true,
     items: buildItems(id),
   }];
 }
@@ -255,11 +303,12 @@ export function useEstimate() {
         const parsed = JSON.parse(saved);
         // Backfill plan fields for estimates saved before these features were added
         if (!parsed.plan) return { ...parsed, plan: emptyPlan };
-        if (!parsed.plan.plants) return { ...parsed, plan: { ...parsed.plan, plants: [] } };
+        if (!parsed.plan.plants) return { ...parsed, plan: { ...parsed.plan, plants: [], items: [] } };
         // Clear old-format plants (plantType with no catalogId — pre-catalog-symbol model)
         if (parsed.plan.plants.some(p => p.plantType && !p.catalogId)) {
-          return { ...parsed, plan: { ...parsed.plan, plants: [] } };
+          return { ...parsed, plan: { ...parsed.plan, plants: [], items: [] } };
         }
+        if (!parsed.plan.items) return { ...parsed, plan: { ...parsed.plan, items: [] } };
         return parsed;
       }
     } catch (e) {}
@@ -468,6 +517,20 @@ export function useEstimate() {
     });
   }, []);
 
+  const addItemPlacement = useCallback((item, catalogItems = []) => {
+    setEstimate(prev => {
+      const newItems = [...(prev.plan.items ?? []), item];
+      return { ...prev, plan: { ...prev.plan, items: newItems }, rows: syncItemsGroup(newItems, prev.rows, catalogItems) };
+    });
+  }, []);
+
+  const removeItemPlacement = useCallback((itemId, catalogItems = []) => {
+    setEstimate(prev => {
+      const newItems = (prev.plan.items ?? []).filter(p => p.id !== itemId);
+      return { ...prev, plan: { ...prev.plan, items: newItems }, rows: syncItemsGroup(newItems, prev.rows, catalogItems) };
+    });
+  }, []);
+
   const removeShape = useCallback((shapeId) => {
     setEstimate(prev => {
       const shape = prev.plan.shapes.find(s => s.id === shapeId);
@@ -535,6 +598,8 @@ export function useEstimate() {
     removeShape,
     addPlant,
     removePlant,
+    addItemPlacement,
+    removeItemPlacement,
     subtotal,
     taxAmount,
     total,

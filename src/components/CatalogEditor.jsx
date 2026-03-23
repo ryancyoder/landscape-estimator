@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { CATEGORIES, CATEGORY_LABELS, CATEGORY_COLORS } from '../data/catalog';
+import { ITEM_TYPES } from './PlanCanvas';
 
 // Categories where all items share a single delivery rate
 const UNIVERSAL_DELIVERY_CATEGORIES = ['bulk_materials'];
@@ -64,6 +65,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
   const hasPerItemDelivery = !isUniversalDelivery && categoryItems.some(i => i.deliveryRate != null);
   const hasWallAssemblies = categoryItems.some(i => i.isWallAssembly);
   const isPlantsCategory = activeCategory === 'plants';
+  const isItemsCategory = activeCategory !== 'plants';
   const colors = CATEGORY_COLORS[activeCategory];
 
   // Universal delivery rate — read from first item that has it
@@ -86,7 +88,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
     + (hasUnitsPerLoad ? 1 : 0)
     + (hasPerItemDelivery ? 1 : 0)
     + (hasWallAssemblies ? 2 : 0)
-    + (isPlantsCategory ? 1 : 0) // Plan Symbol column
+    + 1 // Plan Symbol column (planSymbol for plants, itemSymbol for others)
     + 1;
 
   return (
@@ -229,9 +231,9 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </span>
                   </th>
                 </>}
-                {isPlantsCategory && (
-                  <th className="text-left pb-3 pr-3 w-36">Plan Symbol</th>
-                )}
+                <th className="text-left pb-3 pr-3 w-36">
+                  {isPlantsCategory ? 'Plan Symbol' : 'Item Symbol'}
+                </th>
                 {/* Delete column */}
                 <th className="pb-3 w-8" />
               </tr>
@@ -295,7 +297,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </Cell>
                   </>}
 
-                  {isPlantsCategory && (
+                  {isPlantsCategory ? (
                     <Cell>
                       <select
                         value={item.planSymbol ?? ''}
@@ -308,6 +310,20 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                         <option value="evergreen">🌲 Evergreen</option>
                         <option value="shrub">🌿 Shrub</option>
                         <option value="perennial">🌸 Perennial</option>
+                      </select>
+                    </Cell>
+                  ) : (
+                    <Cell>
+                      <select
+                        value={item.itemSymbol ?? ''}
+                        onChange={e => onUpdate(item.id, 'itemSymbol', e.target.value || null)}
+                        className="w-full border border-gray-200 rounded px-2 py-1 text-sm
+                                   focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                      >
+                        <option value="">None</option>
+                        {ITEM_TYPES.map(it => (
+                          <option key={it.key} value={it.key}>{it.symbol} {it.label}</option>
+                        ))}
                       </select>
                     </Cell>
                   )}

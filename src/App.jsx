@@ -43,6 +43,8 @@ export default function App() {
     removeShape,
     addPlant,
     removePlant,
+    addItemPlacement,
+    removeItemPlacement,
     subtotal,
     taxAmount,
     total,
@@ -306,6 +308,7 @@ export default function App() {
           <PlanView
             estimate={estimate}
             catalogPlants={catalogItems.filter(c => c.category === 'plants')}
+            catalogItems={catalogItems}
             onSetPlanImage={setPlanImage}
             onSetPlanScale={setPlanScale}
             onAddShape={addShape}
@@ -313,6 +316,8 @@ export default function App() {
             onRemoveShape={removeShape}
             onAddPlant={(plant) => addPlant(plant, catalogItems)}
             onRemovePlant={(plantId) => removePlant(plantId, catalogItems)}
+            onAddItemPlacement={(item) => addItemPlacement(item, catalogItems)}
+            onRemoveItemPlacement={(itemId) => removeItemPlacement(itemId, catalogItems)}
             onAddGroup={addGroup}
             onClose={() => setPlanOpen(false)}
           />

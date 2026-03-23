@@ -125,8 +125,8 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
                      focus:outline-none focus:border-indigo-500 placeholder:text-indigo-300 min-w-0"
         />
 
-        {/* Dimension inputs — hidden for plants group */}
-        {!group.isPlantsGroup && (
+        {/* Dimension inputs — hidden for plants group and items group */}
+        {!group.isPlantsGroup && !group.isItemsGroup && (
           <div className="flex items-end gap-3 shrink-0 print:hidden">
             <DimInput label="Sq Ft" value={group.sqFt} onChange={v => onUpdate(group.id, 'sqFt', v)} readOnly={hasMapLink} />
             <DimInput label="Lin Ft" value={group.linearFt} onChange={v => onUpdate(group.id, 'linearFt', v)} readOnly={hasMapLink} />
@@ -141,7 +141,7 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
         )}
 
         {/* Print-only dimension summary */}
-        {!group.isPlantsGroup && (
+        {!group.isPlantsGroup && !group.isItemsGroup && (
           <div className="hidden print:flex items-center gap-4 text-xs text-indigo-600 shrink-0">
             {group.sqFt > 0 && <span>{group.sqFt} sq ft</span>}
             {group.linearFt > 0 && <span>{group.linearFt} lin ft</span>}
