@@ -363,8 +363,6 @@ export default function App() {
               onSetActiveGroup={setActiveGroupId}
               subtotal={subtotal}
               metacategoryTotals={metacategoryTotals}
-              totalLoads={totalLoads}
-              totalDelivery={totalDelivery}
               taxAmount={taxAmount}
               total={total}
             />
@@ -377,8 +375,6 @@ export default function App() {
         estimate={estimate}
         subtotal={subtotal}
         metacategoryTotals={metacategoryTotals}
-        totalLoads={totalLoads}
-        totalDelivery={totalDelivery}
         taxAmount={taxAmount}
         total={total}
       />

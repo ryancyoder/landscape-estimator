@@ -612,13 +612,6 @@ export function useEstimate() {
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
 
-  const subtotal = allItems.reduce((sum, item) => sum + itemLineTotal(item), 0);
-  const metacategoryTotals = METACATEGORIES.reduce((acc, meta) => {
-    acc[meta] = allItems
-      .filter(item => (CATEGORY_METACATEGORY[item.category] ?? 'MATERIAL') === meta)
-      .reduce((sum, item) => sum + itemLineTotal(item), 0);
-    return acc;
-  }, {});
   const totalLoads = allItems.reduce((sum, item) => {
     if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
     return sum + Math.ceil(item.quantity / item.unitsPerLoad);
@@ -627,8 +620,18 @@ export function useEstimate() {
     if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
     return sum + Math.ceil(item.quantity / item.unitsPerLoad) * (item.deliveryRate ?? 0);
   }, 0);
+  // subtotal includes delivery (delivery is a logistics cost, not a separate line)
+  const subtotal = allItems.reduce((sum, item) => sum + itemLineTotal(item), 0) + totalDelivery;
+  const metacategoryTotals = METACATEGORIES.reduce((acc, meta) => {
+    acc[meta] = allItems
+      .filter(item => (CATEGORY_METACATEGORY[item.category] ?? 'MATERIAL') === meta)
+      .reduce((sum, item) => sum + itemLineTotal(item), 0);
+    return acc;
+  }, {});
+  // Delivery charges count as logistics
+  metacategoryTotals['LOGISTICS'] = (metacategoryTotals['LOGISTICS'] ?? 0) + totalDelivery;
   const taxAmount = subtotal * (estimate.taxRate / 100);
-  const total = subtotal + taxAmount + totalDelivery;
+  const total = subtotal + taxAmount;
 
   return {
     estimate,

@@ -19,8 +19,6 @@ export default function EstimatePanel({
   onSetActiveGroup,
   subtotal,
   metacategoryTotals,
-  totalLoads,
-  totalDelivery,
   taxAmount,
   total,
 }) {
@@ -127,8 +125,6 @@ export default function EstimatePanel({
           <EstimateSummary
             subtotal={subtotal}
             metacategoryTotals={metacategoryTotals}
-            totalLoads={totalLoads}
-            totalDelivery={totalDelivery}
             taxAmount={taxAmount}
             total={total}
             taxRate={estimate.taxRate}

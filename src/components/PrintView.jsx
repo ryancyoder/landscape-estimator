@@ -80,7 +80,7 @@ function renderItemRows(item, idx) {
   return rows;
 }
 
-export default function PrintView({ estimate, subtotal, totalLoads, totalDelivery, taxAmount, total }) {
+export default function PrintView({ estimate, subtotal, metacategoryTotals, taxAmount, total }) {
   const allItems = estimate.rows.flatMap(row =>
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
@@ -188,15 +188,9 @@ export default function PrintView({ estimate, subtotal, totalLoads, totalDeliver
           </h2>
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="px-4 py-2 flex justify-between text-sm">
-              <span className="text-gray-600">Materials</span>
+              <span className="text-gray-600">Subtotal</span>
               <span className="font-medium">${fmt(subtotal)}</span>
             </div>
-            {totalLoads > 0 && (
-              <div className="px-4 py-2 flex justify-between text-sm border-t border-gray-100">
-                <span className="text-gray-600">Delivery ({totalLoads} load{totalLoads !== 1 ? 's' : ''})</span>
-                <span className="font-medium">${fmt(totalDelivery)}</span>
-              </div>
-            )}
             <div className="px-4 py-2 flex justify-between text-sm border-t border-gray-100">
               <span className="text-gray-600">Tax ({estimate.taxRate}%)</span>
               <span className="font-medium">${fmt(taxAmount)}</span>
