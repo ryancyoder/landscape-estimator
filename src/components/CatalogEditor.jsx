@@ -103,7 +103,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
     + (hasUnitsPerLoad ? 1 : 0)
     + (hasPerItemDelivery ? 1 : 0)
     + (hasWallAssemblies ? 2 : 0)
-    + 1 // Plan Symbol column (planSymbol for plants, itemSymbol for others)
+    + 1 // symbol column (Plan Symbol for plants, Sym for others)
     + 1;
 
   return (
@@ -210,6 +210,9 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
               <tr className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 <th className="text-left pb-3 pr-3 min-w-[12rem]">Name</th>
                 <th className="text-left pb-3 pr-3 w-24">Unit</th>
+                {isItemsCategory && (
+                  <th className="text-center pb-3 pr-3 w-12">Sym</th>
+                )}
                 <th className="text-right pb-3 pr-3 w-28">$/Unit</th>
                 {hasAssemblies && <>
                   <th className="text-center pb-3 pr-3 w-10">Asm</th>
@@ -246,9 +249,9 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </span>
                   </th>
                 </>}
-                <th className="text-left pb-3 pr-3 w-36">
-                  {isPlantsCategory ? 'Plan Symbol' : 'Item Symbol'}
-                </th>
+                {isPlantsCategory && (
+                  <th className="text-left pb-3 pr-3 w-36">Plan Symbol</th>
+                )}
                 {/* Delete column */}
                 <th className="pb-3 w-8" />
               </tr>
@@ -271,6 +274,24 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                       ))}
                     </select>
                   </Cell>
+                  {isItemsCategory && (
+                    <td className="py-2.5 pr-3 align-middle">
+                      {item.unit === 'ea'
+                        ? <select
+                            value={item.itemSymbol ?? ''}
+                            onChange={e => onUpdate(item.id, 'itemSymbol', e.target.value || null)}
+                            className="w-12 border border-gray-200 rounded px-1 py-1 text-sm text-center
+                                       focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                          >
+                            <option value="">—</option>
+                            {ITEM_TYPES.map(it => (
+                              <option key={it.key} value={it.key}>{it.symbol}</option>
+                            ))}
+                          </select>
+                        : <Dash />
+                      }
+                    </td>
+                  )}
                   <Cell>
                     <NumberInput value={item.unitPrice} onChange={v => onUpdate(item.id, 'unitPrice', v)} step="0.01" prefix="$" />
                   </Cell>
@@ -330,7 +351,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </Cell>
                   </>}
 
-                  {isPlantsCategory ? (
+                  {isPlantsCategory && (
                     <Cell>
                       <select
                         value={item.planSymbol ?? ''}
@@ -343,20 +364,6 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                         <option value="evergreen">🌲 Evergreen</option>
                         <option value="shrub">🌿 Shrub</option>
                         <option value="perennial">🌸 Perennial</option>
-                      </select>
-                    </Cell>
-                  ) : (
-                    <Cell>
-                      <select
-                        value={item.itemSymbol ?? ''}
-                        onChange={e => onUpdate(item.id, 'itemSymbol', e.target.value || null)}
-                        className="w-full border border-gray-200 rounded px-2 py-1 text-sm
-                                   focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
-                      >
-                        <option value="">None</option>
-                        {ITEM_TYPES.map(it => (
-                          <option key={it.key} value={it.key}>{it.symbol} {it.label}</option>
-                        ))}
                       </select>
                     </Cell>
                   )}

@@ -91,7 +91,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                 {inherited ? (
                   <>
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
-                      {item.linearFt}
+                      {Math.round(item.linearFt)}
                     </div>
                     <p className="text-xs text-center text-indigo-400 mt-0.5">lin ft ↑</p>
                   </>
@@ -116,7 +116,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                 {inherited ? (
                   <>
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
-                      {item.height}
+                      {Math.round(item.height * 10) / 10}
                     </div>
                     <p className="text-xs text-center text-indigo-400 mt-0.5">height ↑</p>
                   </>
@@ -163,7 +163,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
               <div className="w-20 shrink-0">
                 {inherited ? (
                   <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
-                    {item.takeoffQty}
+                    {Math.round(item.takeoffQty)}
                   </div>
                 ) : (
                   <input
@@ -198,7 +198,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                 ) : inherited ? (
                   <>
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
-                      {item.quantity}
+                      {Math.round(item.quantity)}
                     </div>
                     <p className="text-xs text-center text-indigo-400 mt-0.5">↑ from group</p>
                   </>
