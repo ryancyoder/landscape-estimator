@@ -11,7 +11,7 @@ const META_LABELS = {
   LOGISTICS: 'Logistics',
 };
 
-export default function EstimateSummary({ subtotal, metacategoryTotals, taxAmount, total, taxRate, onTaxRateChange }) {
+export default function EstimateSummary({ subtotal, metacategoryTotals, totalLoads, taxAmount, total, taxRate, onTaxRateChange }) {
   const activeMetas = METACATEGORIES.filter(m => (metacategoryTotals?.[m] ?? 0) > 0);
 
   return (
@@ -23,7 +23,14 @@ export default function EstimateSummary({ subtotal, metacategoryTotals, taxAmoun
           <div className="px-4 pt-3 pb-2 space-y-1.5 border-b border-gray-100">
             {activeMetas.map(meta => (
               <div key={meta} className="flex justify-between text-xs text-gray-500">
-                <span>{META_LABELS[meta]}</span>
+                <span>
+                  {META_LABELS[meta]}
+                  {meta === 'LOGISTICS' && totalLoads > 0 && (
+                    <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">
+                      {totalLoads} load{totalLoads !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </span>
                 <span>${fmt(metacategoryTotals[meta])}</span>
               </div>
             ))}

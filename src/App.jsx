@@ -20,7 +20,7 @@ import PrintView from './components/PrintView';
 import { CATEGORY_COLORS } from './data/catalog';
 
 export default function App() {
-  const { catalogItems, updateCatalogItem, addCatalogItem, removeCatalogItem, saveCatalog } = useCatalog();
+  const { catalogItems, deliveryRate, updateDeliveryRate, updateCatalogItem, addCatalogItem, removeCatalogItem, saveCatalog } = useCatalog();
 
   const {
     estimate,
@@ -52,7 +52,7 @@ export default function App() {
     totalDelivery,
     taxAmount,
     total,
-  } = useEstimate();
+  } = useEstimate(deliveryRate);
 
   // activeDrag: { type: 'catalog', item } | { type: 'takeoff-group' } | null
   const [activeDrag, setActiveDrag] = useState(null);
@@ -363,6 +363,7 @@ export default function App() {
               onSetActiveGroup={setActiveGroupId}
               subtotal={subtotal}
               metacategoryTotals={metacategoryTotals}
+              totalLoads={totalLoads}
               taxAmount={taxAmount}
               total={total}
             />
@@ -375,6 +376,7 @@ export default function App() {
         estimate={estimate}
         subtotal={subtotal}
         metacategoryTotals={metacategoryTotals}
+        totalLoads={totalLoads}
         taxAmount={taxAmount}
         total={total}
       />
@@ -411,10 +413,12 @@ export default function App() {
       {editorOpen && (
         <CatalogEditor
           items={catalogItems}
+          deliveryRate={deliveryRate}
+          onUpdateDeliveryRate={updateDeliveryRate}
           onUpdate={updateCatalogItem}
           onAdd={addCatalogItem}
           onRemove={removeCatalogItem}
-          onSave={() => saveCatalog(catalogItems)}
+          onSave={() => saveCatalog(catalogItems, deliveryRate)}
           onClose={() => setEditorOpen(false)}
         />
       )}

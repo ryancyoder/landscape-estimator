@@ -71,7 +71,7 @@ function renderItemRows(item, idx) {
   return rows;
 }
 
-export default function PrintView({ estimate, subtotal, metacategoryTotals, taxAmount, total }) {
+export default function PrintView({ estimate, subtotal, metacategoryTotals, totalLoads, taxAmount, total }) {
   const allItems = estimate.rows.flatMap(row =>
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
@@ -164,7 +164,12 @@ export default function PrintView({ estimate, subtotal, metacategoryTotals, taxA
             <tbody>
               {activeMetas.map(meta => (
                 <tr key={meta} className="border-t border-gray-100">
-                  <td className="px-3 py-1.5 text-gray-700">{META_LABELS[meta]}</td>
+                  <td className="px-3 py-1.5 text-gray-700">
+                    {META_LABELS[meta]}
+                    {meta === 'LOGISTICS' && totalLoads > 0 && (
+                      <span className="ml-2 text-xs text-gray-400">({totalLoads} delivery load{totalLoads !== 1 ? 's' : ''})</span>
+                    )}
+                  </td>
                   <td className="px-3 py-1.5 text-right font-medium">${fmt(metacategoryTotals[meta])}</td>
                 </tr>
               ))}

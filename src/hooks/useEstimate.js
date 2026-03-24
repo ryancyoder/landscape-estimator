@@ -216,7 +216,7 @@ function buildItem(catalogItem, groupId = null) {
       takeoffQty: 0,
       ...(catalogItem.unitsPerLoad && {
         unitsPerLoad: catalogItem.unitsPerLoad,
-        deliveryRate: catalogItem.deliveryRate,
+        deliveryFee: catalogItem.deliveryFee ?? false,
       }),
     }),
     ...(catalogItem.isWallAssembly && {
@@ -296,7 +296,7 @@ export function buildImportedEstimate(data, catalogItems) {
 
 const ESTIMATE_KEY = 'landscape-estimate';
 
-export function useEstimate() {
+export function useEstimate(deliveryRate = 0) {
   const [estimate, setEstimate] = useState(() => {
     try {
       const saved = localStorage.getItem(ESTIMATE_KEY);
@@ -310,6 +310,21 @@ export function useEstimate() {
           return { ...parsed, plan: { ...parsed.plan, plants: [], items: [] } };
         }
         if (!parsed.plan.items) return { ...parsed, plan: { ...parsed.plan, items: [] } };
+        // Backfill deliveryFee on items that have unitsPerLoad but predate the deliveryFee field
+        const backfillItem = item =>
+          (item.unitsPerLoad && item.deliveryFee === undefined)
+            ? { ...item, deliveryFee: true }
+            : item;
+        const backfilledRows = parsed.rows.map(row => {
+          if (row.type === 'group') return { ...row, items: row.items.map(backfillItem) };
+          return backfillItem(row);
+        });
+        if (backfilledRows.some((row, i) =>
+          row !== parsed.rows[i] ||
+          (row.type === 'group' && row.items.some((item, j) => item !== parsed.rows[i].items[j]))
+        )) {
+          return { ...parsed, rows: backfilledRows };
+        }
         return parsed;
       }
     } catch (e) {}
@@ -613,13 +628,10 @@ export function useEstimate() {
   );
 
   const totalLoads = allItems.reduce((sum, item) => {
-    if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
+    if (!item.deliveryFee || !item.unitsPerLoad || !(item.quantity > 0)) return sum;
     return sum + Math.ceil(item.quantity / item.unitsPerLoad);
   }, 0);
-  const totalDelivery = allItems.reduce((sum, item) => {
-    if (!item.unitsPerLoad || !(item.quantity > 0)) return sum;
-    return sum + Math.ceil(item.quantity / item.unitsPerLoad) * (item.deliveryRate ?? 0);
-  }, 0);
+  const totalDelivery = totalLoads * deliveryRate;
   // subtotal includes delivery (delivery is a logistics cost, not a separate line)
   const subtotal = allItems.reduce((sum, item) => sum + itemLineTotal(item), 0) + totalDelivery;
   const metacategoryTotals = METACATEGORIES.reduce((acc, meta) => {

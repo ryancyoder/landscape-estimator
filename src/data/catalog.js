@@ -47,6 +47,7 @@ export const CATEGORY_COLORS = {
   logistics: { bg: 'bg-slate-100',  text: 'text-slate-800',  badge: 'bg-slate-200',  border: 'border-slate-300',  dot: 'bg-slate-500'  },
 };
 
-import catalogItems from './catalog-items.json';
+import catalogData from './catalog-items.json';
 
-export default catalogItems;
+export const CATALOG_DELIVERY_RATE = catalogData.deliveryRate ?? 80;
+export default catalogData.items;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import defaultCatalog from '../data/catalog';
+import defaultCatalog, { CATALOG_DELIVERY_RATE } from '../data/catalog';
 
 let idCounter = 0;
 
@@ -13,12 +13,15 @@ const UNIT_OVERRIDES = {
 
 export function useCatalog() {
   const [items, setItems] = useState(() => defaultCatalog.map(item => ({ ...item })));
+  const [deliveryRate, setDeliveryRate] = useState(CATALOG_DELIVERY_RATE);
 
   const updateItem = (id, field, value) => {
     setItems(prev =>
       prev.map(item => item.id === id ? { ...item, [field]: value } : item)
     );
   };
+
+  const updateDeliveryRate = (rate) => setDeliveryRate(rate);
 
   const addItem = (category) => {
     const id = `custom-${category}-${Date.now()}-${++idCounter}`;
@@ -33,9 +36,7 @@ export function useCatalog() {
       }
       if (categoryItems.some(i => i.unitsPerLoad != null)) {
         extraFields.unitsPerLoad = 1;
-      }
-      if (categoryItems.some(i => i.deliveryRate != null)) {
-        extraFields.deliveryRate = 0;
+        extraFields.deliveryFee = false;
       }
 
       return [...prev, {
@@ -44,7 +45,6 @@ export function useCatalog() {
         category,
         unit: 'ea',
         unitPrice: 0,
-        description: '',
         ...extraFields,
         ...(UNIT_OVERRIDES[category] ?? {}),
       }];
@@ -55,12 +55,12 @@ export function useCatalog() {
     setItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const saveCatalog = async (currentItems) => {
+  const saveCatalog = async (currentItems, currentDeliveryRate) => {
     try {
       const res = await fetch('/api/save-catalog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentItems),
+        body: JSON.stringify({ deliveryRate: currentDeliveryRate, items: currentItems }),
       });
       return res.ok;
     } catch (e) {
@@ -68,5 +68,5 @@ export function useCatalog() {
     }
   };
 
-  return { catalogItems: items, updateCatalogItem: updateItem, addCatalogItem: addItem, removeCatalogItem: removeItem, saveCatalog };
+  return { catalogItems: items, deliveryRate, updateDeliveryRate, updateCatalogItem: updateItem, addCatalogItem: addItem, removeCatalogItem: removeItem, saveCatalog };
 }

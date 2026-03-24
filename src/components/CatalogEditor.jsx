@@ -65,7 +65,7 @@ function Dash() {
   return <span className="text-gray-300 text-sm">—</span>;
 }
 
-export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave, onClose }) {
+export default function CatalogEditor({ items, deliveryRate, onUpdateDeliveryRate, onUpdate, onAdd, onRemove, onSave, onClose }) {
   const [activeCategory, setActiveCategory] = useState('plants');
   const [saveState, setSaveState] = useState('idle'); // 'idle' | 'saving' | 'saved'
 
@@ -82,17 +82,10 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
   const isBulkMaterials = activeCategory === 'bulk_materials';
   const hasUnitsPerLoad = isBulkMaterials && categoryItems.some(i => i.unitsPerLoad != null);
   const isUniversalDelivery = UNIVERSAL_DELIVERY_CATEGORIES.includes(activeCategory);
-  const hasPerItemDelivery = isBulkMaterials && !isUniversalDelivery && categoryItems.some(i => i.deliveryRate != null);
   const hasWallAssemblies = categoryItems.some(i => i.isWallAssembly);
   const isPlantsCategory = activeCategory === 'plants';
   const isItemsCategory = activeCategory !== 'plants';
   const colors = CATEGORY_COLORS[activeCategory];
-
-  // Universal delivery rate — read from first item that has it
-  const universalDeliveryRate = categoryItems.find(i => i.deliveryRate != null)?.deliveryRate ?? 0;
-  function setUniversalDeliveryRate(value) {
-    categoryItems.forEach(item => onUpdate(item.id, 'deliveryRate', value));
-  }
 
   function toggleAssembly(item, checked) {
     onUpdate(item.id, 'isAssembly', checked);
@@ -105,8 +98,7 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
   // Total column count for the colspan on the Add row
   const colCount = 3
     + (hasAssemblies ? 4 : 0)   // checkbox + takeoffUnit + coverageRate + roundTo
-    + (hasUnitsPerLoad ? 1 : 0)
-    + (hasPerItemDelivery ? 1 : 0)
+    + (hasUnitsPerLoad ? 2 : 0) // unitsPerLoad + deliveryFee
     + (hasWallAssemblies ? 2 : 0)
     + 1 // symbol column (Plan Symbol for plants, Sym for others)
     + 1;
@@ -206,12 +198,12 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
             <div className="flex items-center gap-4 mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg">
               <div className="flex-1">
                 <p className="text-sm font-medium text-amber-800">Delivery Rate</p>
-                <p className="text-xs text-amber-600 mt-0.5">One rate applies to all bulk material deliveries</p>
+                <p className="text-xs text-amber-600 mt-0.5">One rate applies to all deliveries — toggle per item with the Delivery Fee checkbox</p>
               </div>
               <div className="w-32">
                 <NumberInput
-                  value={universalDeliveryRate}
-                  onChange={setUniversalDeliveryRate}
+                  value={deliveryRate}
+                  onChange={onUpdateDeliveryRate}
                   step="0.01"
                   prefix="$"
                 />
@@ -240,17 +232,20 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </span>
                   </th>
                 </>}
-                {hasUnitsPerLoad && (
+                {hasUnitsPerLoad && (<>
                   <th className="text-right pb-3 pr-3 w-28">
                     Units / Load
                     <span className="block text-gray-300 normal-case tracking-normal font-normal">
                       billing units
                     </span>
                   </th>
-                )}
-                {hasPerItemDelivery && (
-                  <th className="text-right pb-3 pr-3 w-32">$/Delivery</th>
-                )}
+                  <th className="text-center pb-3 pr-3 w-24">
+                    Delivery
+                    <span className="block text-gray-300 normal-case tracking-normal font-normal">
+                      Fee
+                    </span>
+                  </th>
+                </>)}
                 {hasWallAssemblies && <>
                   <th className="text-right pb-3 pr-3 w-32">
                     $/Face Ft
@@ -347,17 +342,19 @@ export default function CatalogEditor({ items, onUpdate, onAdd, onRemove, onSave
                     </Cell>
                   </>}
 
-                  {hasUnitsPerLoad && (
+                  {hasUnitsPerLoad && (<>
                     <Cell>
                       <NumberInput value={item.unitsPerLoad ?? 0} onChange={v => onUpdate(item.id, 'unitsPerLoad', v)} min={0} step={1} />
                     </Cell>
-                  )}
-
-                  {hasPerItemDelivery && (
-                    <Cell>
-                      <NumberInput value={item.deliveryRate ?? 0} onChange={v => onUpdate(item.id, 'deliveryRate', v)} step="0.01" prefix="$" />
-                    </Cell>
-                  )}
+                    <td className="py-2.5 pr-3 align-middle text-center">
+                      <input
+                        type="checkbox"
+                        checked={!!item.deliveryFee}
+                        onChange={e => onUpdate(item.id, 'deliveryFee', e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-amber-500 focus:ring-amber-400 cursor-pointer"
+                      />
+                    </td>
+                  </>)}
 
                   {hasWallAssemblies && <>
                     <Cell>
