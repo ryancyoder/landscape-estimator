@@ -61,6 +61,8 @@ export default function App() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [planOpen, setPlanOpen] = useState(false);
+  const [printModalOpen, setPrintModalOpen] = useState(false);
+  const [printTemplate, setPrintTemplate] = useState('detailed');
   const loadInputRef = useRef(null);
 
   const activeGroup = estimate.rows.find(r => r.type === 'group' && r.id === activeGroupId) ?? null;
@@ -315,7 +317,7 @@ export default function App() {
               Import
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={() => setPrintModalOpen(true)}
               className="flex items-center gap-2 px-4 py-1.5 bg-white text-green-800
                          rounded-lg text-sm font-semibold hover:bg-green-50 transition-colors shadow-sm"
             >
@@ -323,7 +325,7 @@ export default function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
-              Print Estimate
+              Print
             </button>
           </div>
         </header>
@@ -379,6 +381,7 @@ export default function App() {
         totalLoads={totalLoads}
         taxAmount={taxAmount}
         total={total}
+        template={printTemplate}
       />
 
       {/* Drag overlay */}
@@ -409,6 +412,19 @@ export default function App() {
         />
       )}
 
+      {/* Print template picker */}
+      {printModalOpen && (
+        <PrintTemplateModal
+          current={printTemplate}
+          onSelect={(t) => {
+            setPrintTemplate(t);
+            setPrintModalOpen(false);
+            requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+          }}
+          onClose={() => setPrintModalOpen(false)}
+        />
+      )}
+
       {/* Catalog editor modal */}
       {editorOpen && (
         <CatalogEditor
@@ -435,6 +451,74 @@ function TakeOffGroupDragOverlay() {
             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
         <span className="text-sm font-semibold text-indigo-800">New Take Off Group</span>
+      </div>
+    </div>
+  );
+}
+
+function PrintTemplateModal({ current, onSelect, onClose }) {
+  const templates = [
+    {
+      id: 'detailed',
+      label: 'Detailed',
+      desc: 'All line items with quantities and pricing',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+    },
+    {
+      id: 'summary',
+      label: 'Summary',
+      desc: 'Group totals and cost breakdown only',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+            d="M4 6h16M4 10h16M4 14h8m-8 4h4" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 print:hidden">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-80">
+        <h2 className="text-base font-bold text-gray-800 mb-1">Print Template</h2>
+        <p className="text-xs text-gray-400 mb-4">Choose a layout for your printed estimate.</p>
+        <div className="space-y-2">
+          {templates.map(t => (
+            <button
+              key={t.id}
+              onClick={() => onSelect(t.id)}
+              className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-colors flex items-center gap-3
+                ${current === t.id
+                  ? 'border-green-600 bg-green-50'
+                  : 'border-gray-200 hover:border-green-400 hover:bg-green-50'
+                }`}
+            >
+              <span className={current === t.id ? 'text-green-700' : 'text-gray-400'}>
+                {t.icon}
+              </span>
+              <div>
+                <p className="font-semibold text-sm text-gray-800">{t.label}</p>
+                <p className="text-xs text-gray-500">{t.desc}</p>
+              </div>
+              {current === t.id && (
+                <svg className="w-4 h-4 text-green-600 ml-auto shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={onClose}
+          className="mt-4 w-full text-xs text-gray-400 hover:text-gray-600 py-1"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );
