@@ -1,4 +1,4 @@
-import { METACATEGORIES, CATEGORY_METACATEGORY } from '../data/catalog';
+import { METACATEGORIES } from '../data/catalog';
 
 const META_LABELS = {
   MATERIAL:  'Material',
@@ -16,15 +16,6 @@ function itemLineTotal(item) {
     return (item.faceFt * item.pricePerFaceFt) + (item.linearFt * item.pricePerLinearFt);
   }
   return item.quantity * item.unitPrice;
-}
-
-function buildMetacategorySummary(items) {
-  const map = {};
-  for (const item of items) {
-    const meta = CATEGORY_METACATEGORY[item.category] ?? 'MATERIAL';
-    map[meta] = (map[meta] ?? 0) + itemLineTotal(item);
-  }
-  return METACATEGORIES.filter(m => map[m] > 0).map(m => ({ meta: m, total: map[m] }));
 }
 
 function renderItemRows(item, idx) {
@@ -84,7 +75,7 @@ export default function PrintView({ estimate, subtotal, metacategoryTotals, taxA
   const allItems = estimate.rows.flatMap(row =>
     row.type === 'group' ? row.items : row.type === 'item' ? [row] : []
   );
-  const metacategorySummary = buildMetacategorySummary(allItems);
+  const activeMetas = METACATEGORIES.filter(m => (metacategoryTotals?.[m] ?? 0) > 0);
 
   return (
     <div className="hidden print:block p-8 max-w-4xl mx-auto">
@@ -171,10 +162,10 @@ export default function PrintView({ estimate, subtotal, metacategoryTotals, taxA
               </tr>
             </thead>
             <tbody>
-              {metacategorySummary.map(({ meta, total: metaTotal }) => (
+              {activeMetas.map(meta => (
                 <tr key={meta} className="border-t border-gray-100">
                   <td className="px-3 py-1.5 text-gray-700">{META_LABELS[meta]}</td>
-                  <td className="px-3 py-1.5 text-right font-medium">${fmt(metaTotal)}</td>
+                  <td className="px-3 py-1.5 text-right font-medium">${fmt(metacategoryTotals[meta])}</td>
                 </tr>
               ))}
             </tbody>
