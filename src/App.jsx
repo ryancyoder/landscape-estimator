@@ -384,6 +384,8 @@ export default function App() {
             onRemoveItemPlacement={(itemId) => removeItemPlacement(itemId, catalogItems)}
             onAddGroup={addGroup}
             onClose={() => setPlanOpen(false)}
+            kits={kits}
+            onApplyKit={(kit) => addKitToGroup(kit, null)}
           />
         ) : (
           <main className="flex flex-1 overflow-hidden">
