@@ -28,6 +28,8 @@ export default function PlanView({
   onAddItemPlacement, onRemoveItemPlacement,
   onAddGroup,
   onClose,
+  kits,
+  onApplyKit,
 }) {
   const [activeTool, setActiveTool] = useState('select');
   const [selectedPlantId, setSelectedPlantId] = useState(null);
@@ -213,6 +215,8 @@ export default function PlanView({
           onUpdateShape={onUpdateShape}
           onRemoveShape={onRemoveShape}
           onAddGroup={onAddGroup}
+          kits={kits}
+          onApplyKit={onApplyKit}
         />
       </div>
     </div>

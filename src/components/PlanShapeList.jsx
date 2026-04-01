@@ -4,14 +4,17 @@ import { PLANT_TYPES, ITEM_TYPES } from './PlanCanvas';
 const PLANT_SYMBOL_MAP = Object.fromEntries(PLANT_TYPES.map(pt => [pt.key, pt]));
 const ITEM_SYMBOL_MAP = Object.fromEntries(ITEM_TYPES.map(it => [it.key, it]));
 
-function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
+function ShapeItem({ shape, availableGroups, kits, onUpdate, onRemove, onAddGroup, onApplyKit }) {
   const [naming, setNaming] = useState(false);
   const [newName, setNewName] = useState('');
+  const [kitPicking, setKitPicking] = useState(false);
 
   function handleSelectChange(e) {
     if (e.target.value === '__new__') {
       setNaming(true);
       setNewName('');
+    } else if (e.target.value === '__kit__') {
+      setKitPicking(true);
     } else {
       onUpdate(shape.id, { groupId: e.target.value || null });
     }
@@ -22,6 +25,12 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
     const groupId = onAddGroup(name);
     onUpdate(shape.id, { groupId });
     setNaming(false);
+  }
+
+  function handleKitSelect(kit) {
+    const groupId = onApplyKit(kit);
+    onUpdate(shape.id, { groupId });
+    setKitPicking(false);
   }
 
   const header = (
@@ -79,6 +88,38 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
     );
   }
 
+  if (kitPicking) {
+    return (
+      <div className="rounded-lg border border-green-600 bg-gray-800 p-2 flex flex-col gap-1.5">
+        {header}
+        <p className="text-[10px] text-green-400 font-semibold uppercase tracking-wide">Select a kit:</p>
+        <div className="flex flex-col gap-1">
+          {kits.map(kit => (
+            <button
+              key={kit.id}
+              onClick={() => handleKitSelect(kit)}
+              className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded bg-gray-700
+                         hover:bg-green-700 transition-colors text-xs text-gray-200 hover:text-white"
+            >
+              <svg className="w-3.5 h-3.5 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <span className="flex-1 truncate font-medium">{kit.name}</span>
+              <span className="text-[10px] text-gray-400 shrink-0">{kit.items.length} items</span>
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setKitPicking(false)}
+          className="w-full py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-400 rounded transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-2 flex flex-col gap-1.5">
       {header}
@@ -93,6 +134,7 @@ function ShapeItem({ shape, availableGroups, onUpdate, onRemove, onAddGroup }) {
           <option key={g.id} value={g.id}>{g.label}</option>
         ))}
         <option value="__new__">＋ New group…</option>
+        {kits?.length > 0 && <option value="__kit__">🔖 From kit…</option>}
       </select>
     </div>
   );
@@ -103,6 +145,7 @@ export default function PlanShapeList({
   onSetPlanImage, onSetScale, onResetScale,
   onUpdateShape, onRemoveShape, onAddGroup,
   showCalLine, onToggleCalLine,
+  kits, onApplyKit,
 }) {
   const fileInputRef = useRef(null);
   const [calDistance, setCalDistance] = useState('');
@@ -265,9 +308,11 @@ export default function PlanShapeList({
               key={shape.id}
               shape={shape}
               availableGroups={availableGroups}
+              kits={kits}
               onUpdate={onUpdateShape}
               onRemove={onRemoveShape}
               onAddGroup={onAddGroup}
+              onApplyKit={onApplyKit}
             />
           );
         })}
