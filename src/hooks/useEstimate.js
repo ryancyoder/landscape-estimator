@@ -599,6 +599,76 @@ export function useEstimate(deliveryRate = 0) {
     });
   }, []);
 
+  const addKitToGroup = useCallback((kit, groupId) => {
+    const newGroupId = groupId ?? genId('group');
+    setEstimate(prev => {
+      const targetGroup = groupId
+        ? prev.rows.find(r => r.type === 'group' && r.id === groupId)
+        : null;
+
+      const newItems = kit.items.map(kitItem => {
+        const item = {
+          type: 'item',
+          id: genId('item'),
+          groupId: newGroupId,
+          catalogId: kitItem.catalogId,
+          name: kitItem.name,
+          category: kitItem.category,
+          unit: kitItem.unit,
+          unitPrice: kitItem.unitPrice,
+          quantity: kitItem.isAssembly || kitItem.isWallAssembly ? 0 : 1,
+          notes: kitItem.notes ?? '',
+          ...(kitItem.isAssembly && {
+            isAssembly: true,
+            takeoffUnit: kitItem.takeoffUnit ?? 'sq ft',
+            coverageRate: kitItem.coverageRate ?? 1,
+            roundTo: kitItem.roundTo ?? null,
+            takeoffQty: 0,
+            ...(kitItem.unitsPerLoad != null && {
+              unitsPerLoad: kitItem.unitsPerLoad,
+              deliveryFee: kitItem.deliveryFee ?? true,
+            }),
+          }),
+          ...(kitItem.isWallAssembly && {
+            isWallAssembly: true,
+            pricePerFaceFt: kitItem.pricePerFaceFt ?? 0,
+            pricePerLinearFt: kitItem.pricePerLinearFt ?? 0,
+            linearFt: 0,
+            height: 1,
+            faceFt: 0,
+          }),
+        };
+        return targetGroup ? applyGroupTakeoff(item, targetGroup) : item;
+      });
+
+      if (groupId) {
+        // Add items to existing group
+        return {
+          ...prev,
+          rows: prev.rows.map(row => {
+            if (row.type !== 'group' || row.id !== groupId) return row;
+            return { ...row, items: [...row.items, ...newItems] };
+          }),
+        };
+      }
+
+      // Create a new group named after the kit and add items to it
+      const newGroup = {
+        type: 'group',
+        id: newGroupId,
+        label: kit.name,
+        sqFt: 0,
+        linearFt: 0,
+        height: 0,
+        collapsed: false,
+        notes: '',
+        items: newItems,
+      };
+      return { ...prev, rows: [...prev.rows, newGroup] };
+    });
+    return newGroupId;
+  }, []);
+
   const reorderRows = useCallback((activeId, overId) => {
     setEstimate(prev => {
       // Try reordering top-level rows
@@ -659,6 +729,7 @@ export function useEstimate(deliveryRate = 0) {
     updateWallDimensions,
     reorderRows,
     moveItemToGroup,
+    addKitToGroup,
     importEstimate,
     resetEstimate,
     setPlanImage,

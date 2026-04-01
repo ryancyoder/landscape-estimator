@@ -10,9 +10,11 @@ import {
 } from '@dnd-kit/core';
 import { useEstimate } from './hooks/useEstimate';
 import { useCatalog } from './hooks/useCatalog';
+import { useAssemblyKits } from './hooks/useAssemblyKits';
 import CatalogPanel from './components/CatalogPanel';
 import CatalogEditor from './components/CatalogEditor';
 import ImportModal from './components/ImportModal';
+import AssemblyKitModal from './components/AssemblyKitModal';
 import QuickPicker from './components/QuickPicker';
 import EstimatePanel from './components/EstimatePanel';
 import PlanView from './components/PlanView';
@@ -21,6 +23,7 @@ import { CATEGORY_COLORS } from './data/catalog';
 
 export default function App() {
   const { catalogItems, deliveryRate, updateDeliveryRate, updateCatalogItem, addCatalogItem, removeCatalogItem, saveCatalog } = useCatalog();
+  const { kits, saveKit, removeKit } = useAssemblyKits();
 
   const {
     estimate,
@@ -35,6 +38,7 @@ export default function App() {
     updateWallDimensions,
     reorderRows,
     moveItemToGroup,
+    addKitToGroup,
     importEstimate,
     resetEstimate,
     setPlanImage,
@@ -54,7 +58,7 @@ export default function App() {
     total,
   } = useEstimate(deliveryRate);
 
-  // activeDrag: { type: 'catalog', item } | { type: 'takeoff-group' } | null
+  // activeDrag: { type: 'catalog', item } | { type: 'takeoff-group' } | { type: 'assembly-kit', kit } | null
   const [activeDrag, setActiveDrag] = useState(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
@@ -63,6 +67,7 @@ export default function App() {
   const [planOpen, setPlanOpen] = useState(false);
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [printTemplate, setPrintTemplate] = useState('detailed');
+  const [savingKitGroupId, setSavingKitGroupId] = useState(null);
   const loadInputRef = useRef(null);
 
   const activeGroup = estimate.rows.find(r => r.type === 'group' && r.id === activeGroupId) ?? null;
@@ -146,6 +151,8 @@ export default function App() {
       setActiveDrag({ type: 'catalog', item: data.catalogItem });
     } else if (data?.type === 'takeoff-group') {
       setActiveDrag({ type: 'takeoff-group' });
+    } else if (data?.type === 'assembly-kit') {
+      setActiveDrag({ type: 'assembly-kit', kit: data.kit });
     } else {
       setActiveDrag(null);
     }
@@ -161,6 +168,16 @@ export default function App() {
 
     if (activeData?.type === 'takeoff-group') {
       addGroup();
+    } else if (activeData?.type === 'assembly-kit') {
+      const overRow = estimate.rows.find(r => r.id === over.id);
+      if (overRow?.type === 'group') {
+        addKitToGroup(activeData.kit, overRow.id);
+      } else {
+        const parentGroup = estimate.rows.find(
+          r => r.type === 'group' && r.items.some(i => i.id === over.id)
+        );
+        addKitToGroup(activeData.kit, parentGroup ? parentGroup.id : null);
+      }
     } else if (activeData?.type === 'catalog') {
       // Check if dropped directly on a group header
       const overRow = estimate.rows.find(r => r.id === over.id);
@@ -350,7 +367,7 @@ export default function App() {
           />
         ) : (
           <main className="flex flex-1 overflow-hidden">
-            <CatalogPanel catalogItems={catalogItems} />
+            <CatalogPanel catalogItems={catalogItems} kits={kits} onRemoveKit={removeKit} />
             <EstimatePanel
               estimate={estimate}
               planShapes={estimate.plan?.shapes ?? []}
@@ -361,6 +378,7 @@ export default function App() {
               onUpdateTakeoff={updateTakeoff}
               onUpdateWallDimensions={updateWallDimensions}
               onRemoveRow={removeRow}
+              onSaveAsKit={(groupId) => setSavingKitGroupId(groupId)}
               activeGroupId={activeGroupId}
               onSetActiveGroup={setActiveGroupId}
               subtotal={subtotal}
@@ -390,6 +408,8 @@ export default function App() {
           <TakeOffGroupDragOverlay />
         ) : activeDrag?.type === 'catalog' ? (
           <CatalogDragOverlay item={activeDrag.item} />
+        ) : activeDrag?.type === 'assembly-kit' ? (
+          <AssemblyKitDragOverlay kit={activeDrag.kit} />
         ) : null}
       </DragOverlay>
 
@@ -411,6 +431,23 @@ export default function App() {
           onClose={() => setImportOpen(false)}
         />
       )}
+
+      {/* Assembly Kit save modal */}
+      {savingKitGroupId != null && (() => {
+        const group = estimate.rows.find(r => r.type === 'group' && r.id === savingKitGroupId);
+        if (!group) return null;
+        return (
+          <AssemblyKitModal
+            groupLabel={group.label}
+            itemCount={group.items.length}
+            onSave={(name, description) => {
+              saveKit(name, description, group.items);
+              setSavingKitGroupId(null);
+            }}
+            onClose={() => setSavingKitGroupId(null)}
+          />
+        );
+      })()}
 
       {/* Print template picker */}
       {printModalOpen && (
@@ -519,6 +556,23 @@ function PrintTemplateModal({ current, onSelect, onClose }) {
         >
           Cancel
         </button>
+      </div>
+    </div>
+  );
+}
+
+function AssemblyKitDragOverlay({ kit }) {
+  return (
+    <div className="rounded-lg border border-green-300 bg-green-50 shadow-2xl px-3 py-2.5 w-60 opacity-90">
+      <div className="flex items-center gap-2">
+        <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        </svg>
+        <span className="text-sm font-semibold text-green-800 truncate">{kit.name}</span>
+        <span className="ml-auto text-xs bg-green-200 text-green-700 px-1.5 py-0.5 rounded-full shrink-0">
+          {kit.items.length}
+        </span>
       </div>
     </div>
   );

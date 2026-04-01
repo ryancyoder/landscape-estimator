@@ -15,6 +15,7 @@ export default function EstimatePanel({
   onUpdateTakeoff,
   onUpdateWallDimensions,
   onRemoveRow,
+  onSaveAsKit,
   activeGroupId,
   onSetActiveGroup,
   subtotal,
@@ -80,6 +81,7 @@ export default function EstimatePanel({
                         onUpdate={onUpdateGroup}
                         onToggleCollapse={onToggleGroupCollapse}
                         onRemove={onRemoveRow}
+                        onSaveAsKit={onSaveAsKit}
                         isActive={row.id === activeGroupId}
                         onSetActive={onSetActiveGroup}
                         hasMapLink={planShapes.some(s => s.groupId === row.id)}
