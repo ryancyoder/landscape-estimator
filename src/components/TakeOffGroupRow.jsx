@@ -175,7 +175,7 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
         {!group.isPlantsGroup && !group.isItemsGroup && onSaveAsKit && (
           <button
             onClick={() => onSaveAsKit(group.id)}
-            className="shrink-0 p-1 rounded text-indigo-300 hover:text-green-600 hover:bg-green-50 transition-colors print:hidden"
+            className="shrink-0 p-1 rounded text-green-600 hover:text-green-700 hover:bg-green-100 transition-colors print:hidden"
             title="Save as assembly kit"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
