@@ -37,9 +37,14 @@ export default function PlanView({
   const [calPoints, setCalPoints] = useState([]);
   const [showCalLine, setShowCalLine] = useState(false);
   const [showMeasurements, setShowMeasurements] = useState(true);
+  const [activeKitId, setActiveKitId] = useState(null);
 
   const plantable = (catalogPlants ?? []).filter(c => c.planSymbol);
   const itemable = (catalogItems ?? []).filter(c => c.itemSymbol);
+
+  // Kits visible in area/linear sub-toolbars: match takeoffUnit or unset (either)
+  const areaKits = (kits ?? []).filter(k => !k.takeoffUnit || k.takeoffUnit === 'area');
+  const linearKits = (kits ?? []).filter(k => !k.takeoffUnit || k.takeoffUnit === 'linear');
 
   const calPending = calPoints.length === 2;
   const groups = estimate.rows.filter(r => r.type === 'group');
@@ -47,8 +52,11 @@ export default function PlanView({
   function handleCalibrationPointsSet(p1, p2) { setCalPoints([p1, p2]); }
 
   function handleShapeComplete(type, vertices) {
-    const color = SHAPE_COLORS[estimate.plan.shapes.length % SHAPE_COLORS.length];
-    onAddShape({ id: genId('shape'), type, groupId: null, vertices, measurement: 0, color });
+    const activeKit = (kits ?? []).find(k => k.id === activeKitId);
+    const color = activeKit?.color ?? SHAPE_COLORS[estimate.plan.shapes.length % SHAPE_COLORS.length];
+    const groupId = activeKit ? onApplyKit(activeKit) : null;
+    onAddShape({ id: genId('shape'), type, groupId, vertices, measurement: 0, color });
+    setActiveKitId(null);
     setActiveTool('select');
   }
 
@@ -120,6 +128,58 @@ export default function PlanView({
         </button>
         <span className="text-xs text-gray-500 hidden sm:block">{toolHints[activeTool]}</span>
       </div>
+
+      {/* Area kit sub-toolbar */}
+      {activeTool === 'area' && areaKits.length > 0 && (
+        <div className="flex items-center gap-1.5 px-4 py-1.5 bg-gray-800 border-b border-gray-700 shrink-0 overflow-x-auto">
+          <span className="text-xs text-gray-500 shrink-0 mr-1">Kit:</span>
+          <button
+            onClick={() => setActiveKitId(null)}
+            className={`shrink-0 px-2.5 py-1 rounded text-xs font-medium transition-colors
+              ${activeKitId === null ? 'bg-white text-gray-900' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+          >
+            None
+          </button>
+          {areaKits.map(kit => (
+            <button
+              key={kit.id}
+              onClick={() => setActiveKitId(activeKitId === kit.id ? null : kit.id)}
+              className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-colors
+                ${activeKitId === kit.id ? 'bg-white text-gray-900' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+            >
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: kit.color ?? '#059669' }} />
+              {kit.name}
+              <span className="opacity-40 text-[10px]">{kit.items.length}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Linear kit sub-toolbar */}
+      {activeTool === 'linear' && linearKits.length > 0 && (
+        <div className="flex items-center gap-1.5 px-4 py-1.5 bg-gray-800 border-b border-gray-700 shrink-0 overflow-x-auto">
+          <span className="text-xs text-gray-500 shrink-0 mr-1">Kit:</span>
+          <button
+            onClick={() => setActiveKitId(null)}
+            className={`shrink-0 px-2.5 py-1 rounded text-xs font-medium transition-colors
+              ${activeKitId === null ? 'bg-white text-gray-900' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+          >
+            None
+          </button>
+          {linearKits.map(kit => (
+            <button
+              key={kit.id}
+              onClick={() => setActiveKitId(activeKitId === kit.id ? null : kit.id)}
+              className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-colors
+                ${activeKitId === kit.id ? 'bg-white text-gray-900' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+            >
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: kit.color ?? '#059669' }} />
+              {kit.name}
+              <span className="opacity-40 text-[10px]">{kit.items.length}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Plant sub-toolbar */}
       {activeTool === 'plant' && (
