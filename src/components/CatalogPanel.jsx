@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CATEGORIES, CATEGORY_LABELS, CATEGORY_COLORS } from '../data/catalog';
+import { SHAPE_COLORS } from '../hooks/useEstimate';
 import CatalogCard from './CatalogCard';
 
 function TakeOffGroupCard() {
@@ -33,53 +34,103 @@ function TakeOffGroupCard() {
   );
 }
 
-function AssemblyKitCard({ kit, onRemove }) {
+const UNIT_CYCLE = [null, 'area', 'linear'];
+const UNIT_LABELS = { null: 'Any', area: 'Area', linear: 'Linear' };
+
+function AssemblyKitCard({ kit, onRemove, onUpdate }) {
+  const [showColors, setShowColors] = useState(false);
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `kit-drag-${kit.id}`,
     data: { type: 'assembly-kit', kit },
   });
 
+  function cycleUnit(e) {
+    e.stopPropagation();
+    const idx = UNIT_CYCLE.indexOf(kit.takeoffUnit ?? null);
+    const next = UNIT_CYCLE[(idx + 1) % UNIT_CYCLE.length];
+    onUpdate(kit.id, { takeoffUnit: next });
+  }
+
+  const dotColor = kit.color ?? '#059669';
+
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={{ touchAction: 'none' }}
-      className={`
-        flex items-center gap-2 px-3 py-2 rounded-lg border border-green-200
-        bg-green-50 cursor-grab active:cursor-grabbing hover:bg-green-100 transition-colors group
-        ${isDragging ? 'opacity-40' : ''}
-      `}
-    >
-      <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-      </svg>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-green-800 truncate">{kit.name}</p>
-        {kit.description && (
-          <p className="text-xs text-green-600 truncate">{kit.description}</p>
-        )}
-      </div>
-      <span className="text-xs bg-green-200 text-green-700 px-1.5 py-0.5 rounded-full shrink-0 font-medium">
-        {kit.items.length}
-      </span>
-      <button
-        onPointerDown={e => e.stopPropagation()}
-        onClick={e => { e.stopPropagation(); onRemove(kit.id); }}
-        className="shrink-0 p-0.5 rounded text-green-300 hover:text-red-500 hover:bg-red-50
-                   opacity-0 group-hover:opacity-100 transition-all"
-        title="Remove kit"
+    <div className="flex flex-col gap-1">
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        style={{ touchAction: 'none' }}
+        className={`
+          flex items-center gap-2 px-2.5 py-2 rounded-lg border border-green-200
+          bg-green-50 cursor-grab active:cursor-grabbing hover:bg-green-100 transition-colors group
+          ${isDragging ? 'opacity-40' : ''}
+        `}
       >
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+        {/* Color swatch — stops drag, toggles color picker */}
+        <button
+          onPointerDown={e => e.stopPropagation()}
+          onClick={e => { e.stopPropagation(); setShowColors(v => !v); }}
+          className="w-4 h-4 rounded-full shrink-0 border-2 border-white ring-1 ring-gray-300 hover:ring-gray-500 transition-all"
+          style={{ backgroundColor: dotColor }}
+          title="Change color"
+        />
+
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold text-green-800 truncate">{kit.name}</p>
+          {kit.description && (
+            <p className="text-[10px] text-green-600 truncate">{kit.description}</p>
+          )}
+        </div>
+
+        {/* Unit badge */}
+        <button
+          onPointerDown={e => e.stopPropagation()}
+          onClick={cycleUnit}
+          className="shrink-0 text-[10px] px-1.5 py-0.5 rounded font-semibold transition-colors
+            bg-green-200 text-green-700 hover:bg-indigo-200 hover:text-indigo-700"
+          title="Click to cycle takeoff type"
+        >
+          {UNIT_LABELS[kit.takeoffUnit ?? null]}
+        </button>
+
+        <span className="text-xs bg-green-200 text-green-700 px-1.5 py-0.5 rounded-full shrink-0 font-medium">
+          {kit.items.length}
+        </span>
+
+        <button
+          onPointerDown={e => e.stopPropagation()}
+          onClick={e => { e.stopPropagation(); onRemove(kit.id); }}
+          className="shrink-0 p-0.5 rounded text-green-300 hover:text-red-500 hover:bg-red-50
+                     opacity-0 group-hover:opacity-100 transition-all"
+          title="Remove kit"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Inline color picker */}
+      {showColors && (
+        <div className="flex gap-1.5 flex-wrap px-1 pb-1">
+          {SHAPE_COLORS.map(c => (
+            <button
+              key={c}
+              onPointerDown={e => e.stopPropagation()}
+              onClick={e => { e.stopPropagation(); onUpdate(kit.id, { color: c }); setShowColors(false); }}
+              className={`w-5 h-5 rounded-full border-2 transition-all hover:scale-110
+                ${(kit.color ?? null) === c ? 'border-gray-700 scale-110' : 'border-transparent'}`}
+              style={{ backgroundColor: c }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-export default function CatalogPanel({ catalogItems, kits = [], onRemoveKit }) {
+export default function CatalogPanel({ catalogItems, kits = [], onRemoveKit, onUpdateKit }) {
   const [activeCategory, setActiveCategory] = useState('plants');
   const [kitsExpanded, setKitsExpanded] = useState(true);
 
@@ -128,7 +179,7 @@ export default function CatalogPanel({ catalogItems, kits = [], onRemoveKit }) {
               </p>
             ) : (
               kits.map(kit => (
-                <AssemblyKitCard key={kit.id} kit={kit} onRemove={onRemoveKit} />
+                <AssemblyKitCard key={kit.id} kit={kit} onRemove={onRemoveKit} onUpdate={onUpdateKit} />
               ))
             )}
           </div>

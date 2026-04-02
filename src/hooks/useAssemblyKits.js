@@ -18,7 +18,7 @@ export function useAssemblyKits() {
     try { localStorage.setItem(KITS_KEY, JSON.stringify(kits)); } catch {}
   }, [kits]);
 
-  const saveKit = (name, description, groupItems) => {
+  const saveKit = (name, description, groupItems, { color, takeoffUnit } = {}) => {
     const kitItems = groupItems.map(item => {
       const base = {
         catalogId: item.catalogId,
@@ -51,6 +51,8 @@ export function useAssemblyKits() {
       name,
       description: description ?? '',
       createdAt: new Date().toISOString(),
+      color: color ?? null,
+      takeoffUnit: takeoffUnit ?? null, // 'area' | 'linear' | null (either)
       items: kitItems,
     };
     setKits(prev => [...prev, kit]);
@@ -61,5 +63,9 @@ export function useAssemblyKits() {
     setKits(prev => prev.filter(k => k.id !== id));
   };
 
-  return { kits, saveKit, removeKit };
+  const updateKit = (id, changes) => {
+    setKits(prev => prev.map(k => k.id === id ? { ...k, ...changes } : k));
+  };
+
+  return { kits, saveKit, removeKit, updateKit };
 }

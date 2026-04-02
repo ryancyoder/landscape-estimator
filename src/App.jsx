@@ -8,7 +8,7 @@ import {
   useSensors,
   closestCenter,
 } from '@dnd-kit/core';
-import { useEstimate } from './hooks/useEstimate';
+import { useEstimate, SHAPE_COLORS } from './hooks/useEstimate';
 import { useCatalog } from './hooks/useCatalog';
 import { useAssemblyKits } from './hooks/useAssemblyKits';
 import CatalogPanel from './components/CatalogPanel';
@@ -23,7 +23,7 @@ import { CATEGORY_COLORS } from './data/catalog';
 
 export default function App() {
   const { catalogItems, deliveryRate, updateDeliveryRate, updateCatalogItem, addCatalogItem, removeCatalogItem, saveCatalog } = useCatalog();
-  const { kits, saveKit, removeKit } = useAssemblyKits();
+  const { kits, saveKit, removeKit, updateKit } = useAssemblyKits();
 
   const {
     estimate,
@@ -389,7 +389,7 @@ export default function App() {
           />
         ) : (
           <main className="flex flex-1 overflow-hidden">
-            <CatalogPanel catalogItems={catalogItems} kits={kits} onRemoveKit={removeKit} />
+            <CatalogPanel catalogItems={catalogItems} kits={kits} onRemoveKit={removeKit} onUpdateKit={updateKit} />
             <EstimatePanel
               estimate={estimate}
               planShapes={estimate.plan?.shapes ?? []}
@@ -462,8 +462,9 @@ export default function App() {
           <AssemblyKitModal
             groupLabel={group.label}
             itemCount={group.items.length}
-            onSave={(name, description) => {
-              saveKit(name, description, group.items);
+            defaultColor={SHAPE_COLORS[kits.length % SHAPE_COLORS.length]}
+            onSave={(name, description, options) => {
+              saveKit(name, description, group.items, options);
               setSavingKitGroupId(null);
             }}
             onClose={() => setSavingKitGroupId(null)}
