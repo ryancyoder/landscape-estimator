@@ -89,7 +89,7 @@ export default function EstimatePanel({
                           items={row.items.map(i => i.id)}
                           strategy={verticalListSortingStrategy}
                         >
-                          <div className="flex flex-col gap-1.5 p-2">
+                          <div className="flex flex-col gap-1.5 py-2">
                             {row.items.map(item => (
                               <EstimateRow
                                 key={item.id}
