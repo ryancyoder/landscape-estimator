@@ -72,12 +72,6 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
         {/* Category dot */}
         <span className={`w-2 h-2 rounded-full shrink-0 ${colors.dot}`} />
 
-        {/* Name */}
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
-          <p className="text-xs text-gray-400">{item.category}</p>
-        </div>
-
         {/* ── WALL ASSEMBLY ── */}
         {item.isWallAssembly ? (
           <>
@@ -136,6 +130,12 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                 <p className="text-xs font-medium text-gray-700">{fmt(item.faceFt)}</p>
                 <p className="text-xs text-gray-400">face ft</p>
               </div>
+            </div>
+
+            {/* Name */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+              <p className="text-xs text-gray-400">{item.category}</p>
             </div>
 
             {/* Dual price display */}
@@ -212,6 +212,12 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                 )}
               </div>
             )}
+
+            {/* Name */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+              <p className="text-xs text-gray-400">{item.category}</p>
+            </div>
 
             {/* Unit price (read-only — comes from catalog) */}
             <div className="w-24 text-right shrink-0">
