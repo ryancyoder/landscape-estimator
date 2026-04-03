@@ -130,17 +130,6 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
           </svg>
         </button>
 
-        {/* Label */}
-        <input
-          type="text"
-          value={group.label}
-          onChange={e => onUpdate(group.id, 'label', e.target.value)}
-          placeholder="Take Off Label"
-          data-group-label={group.id}
-          className="flex-1 text-sm font-semibold text-indigo-800 bg-transparent border-b border-indigo-200
-                     focus:outline-none focus:border-indigo-500 placeholder:text-indigo-300 min-w-0"
-        />
-
         {/* Dimension inputs — only show what items in this group actually need */}
         {!group.isPlantsGroup && !group.isItemsGroup && (
           <div className="flex items-end gap-3 shrink-0 print:hidden">
@@ -157,6 +146,17 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
             )}
           </div>
         )}
+
+        {/* Label */}
+        <input
+          type="text"
+          value={group.label}
+          onChange={e => onUpdate(group.id, 'label', e.target.value)}
+          placeholder="Take Off Label"
+          data-group-label={group.id}
+          className="flex-1 text-sm font-semibold text-indigo-800 bg-transparent border-b border-indigo-200
+                     focus:outline-none focus:border-indigo-500 placeholder:text-indigo-300 min-w-0"
+        />
 
         {/* Print-only dimension summary */}
         {!group.isPlantsGroup && !group.isItemsGroup && (
