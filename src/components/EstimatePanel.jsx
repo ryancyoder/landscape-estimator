@@ -36,10 +36,9 @@ export default function EstimatePanel({
       <div className="flex-1 overflow-y-auto px-6 py-4">
         {/* Column headers */}
         {hasRows && (
-          <div className="flex items-center gap-2 px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="flex items-center gap-3 px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             <span className="w-6 shrink-0 print:hidden" />
-            <span className="w-2 shrink-0" />
-            <span className="w-14 text-center">Unit</span>
+            <span className="w-6 shrink-0" />
             <span className="w-20 text-center">Qty</span>
             <span className="flex-1">Item</span>
             <span className="w-24 text-right">$/Unit</span>

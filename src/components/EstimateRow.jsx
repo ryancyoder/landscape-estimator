@@ -53,7 +53,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
       `}
     >
       {/* Main row */}
-      <div className="flex items-center gap-2 px-3 py-2">
+      <div className="flex items-center gap-3 px-3 py-2">
 
         {/* Drag handle */}
         <button
@@ -69,8 +69,10 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
           </svg>
         </button>
 
-        {/* Category dot */}
-        <span className={`w-2 h-2 rounded-full shrink-0 ${colors.dot}`} />
+        {/* Category dot — same width as group collapse button for column alignment */}
+        <span className="shrink-0 w-6 flex items-center justify-center">
+          <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
+        </span>
 
         {/* ── WALL ASSEMBLY ── */}
         {item.isWallAssembly ? (
@@ -146,15 +148,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
           </>
         ) : (
           <>
-            {/* ── STANDARD / ASSEMBLY ── */}
-            {/* Unit badge */}
-            <div className="w-14 text-center shrink-0">
-              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                {item.isAssembly ? item.takeoffUnit : item.unit}
-              </span>
-            </div>
-
-            {/* Qty / Takeoff input (or read-only if inherited from group) */}
+            {/* ── STANDARD / ASSEMBLY — qty field aligns with group DimInput ── */}
             {item.isAssembly ? (
               <div className="w-20 shrink-0">
                 {inherited ? (
@@ -174,7 +168,7 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                   />
                 )}
                 <p className="text-xs text-center text-gray-400 mt-0.5">
-                  = {item.quantity.toFixed(2)} {item.unit}
+                  {item.takeoffUnit} → {item.quantity.toFixed(2)} {item.unit}
                 </p>
                 {loads > 0 && (
                   <p className="text-xs text-center text-blue-500 mt-0.5">
@@ -196,19 +190,22 @@ export default function EstimateRow({ item, isGrouped = false, onUpdate, onUpdat
                     <div className="text-sm text-center border border-indigo-200 rounded px-2 py-1 bg-indigo-50 text-indigo-700">
                       {Math.round(item.quantity)}
                     </div>
-                    <p className="text-xs text-center text-indigo-400 mt-0.5">↑ from group</p>
+                    <p className="text-xs text-center text-indigo-400 mt-0.5">{item.unit} ↑</p>
                   </>
                 ) : (
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={item.quantity}
-                    onChange={e => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)}
-                    className="w-full text-sm text-center border border-gray-200 rounded px-2 py-1
-                               focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                    title="Quantity"
-                  />
+                  <>
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={item.quantity}
+                      onChange={e => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                      className="w-full text-sm text-center border border-gray-200 rounded px-2 py-1
+                                 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                      title="Quantity"
+                    />
+                    <p className="text-xs text-center text-gray-400 mt-0.5">{item.unit}</p>
+                  </>
                 )}
               </div>
             )}
