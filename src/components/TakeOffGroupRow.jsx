@@ -48,6 +48,25 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
   const faceFt = group.linearFt * group.height;
   const groupTotal = group.items.reduce((sum, item) => sum + itemLineTotal(item), 0);
 
+  // Derive which dimension inputs are relevant from the items in this group.
+  // Always show a dimension if its value is non-zero (user set it manually).
+  const needsSqFt = group.items.some(i =>
+    (i.isAssembly && (!i.takeoffUnit || i.takeoffUnit === 'sq ft')) ||
+    (!i.isAssembly && !i.isWallAssembly && i.unit === 'sq ft')
+  );
+  const needsLinFt = group.items.some(i =>
+    (i.isAssembly && i.takeoffUnit === 'ln ft') ||
+    i.isWallAssembly ||
+    (!i.isAssembly && !i.isWallAssembly && i.unit === 'ln ft')
+  );
+  const needsHeight = group.items.some(i => i.isWallAssembly);
+
+  // Show sq ft if items need it, or if it's non-zero, or if nothing else is needed (default for empty groups)
+  const showSqFt  = needsSqFt  || group.sqFt > 0     || (!needsLinFt && !needsHeight);
+  const showLinFt = needsLinFt || group.linearFt > 0;
+  const showHeight = needsHeight || group.height > 0;
+  const showFaceFt = showHeight;
+
   const {
     attributes,
     listeners,
@@ -122,18 +141,20 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
                      focus:outline-none focus:border-indigo-500 placeholder:text-indigo-300 min-w-0"
         />
 
-        {/* Dimension inputs — hidden for plants group and items group */}
+        {/* Dimension inputs — only show what items in this group actually need */}
         {!group.isPlantsGroup && !group.isItemsGroup && (
           <div className="flex items-end gap-3 shrink-0 print:hidden">
-            <DimInput label="Sq Ft" value={group.sqFt} onChange={v => onUpdate(group.id, 'sqFt', v)} readOnly={hasMapLink} />
-            <DimInput label="Lin Ft" value={group.linearFt} onChange={v => onUpdate(group.id, 'linearFt', v)} readOnly={hasMapLink} />
-            <DimInput label="Height" value={group.height} onChange={v => onUpdate(group.id, 'height', v)} step="0.5" />
-            <div className="flex flex-col items-center gap-0.5">
-              <span className="text-xs text-indigo-400 font-medium uppercase tracking-wide">Face Ft</span>
-              <div className="w-20 text-sm text-center bg-indigo-100 text-indigo-700 font-semibold rounded px-2 py-1">
-                {faceFt.toLocaleString('en-US', { maximumFractionDigits: 1 })}
+            {showSqFt  && <DimInput label="Sq Ft"  value={group.sqFt}      onChange={v => onUpdate(group.id, 'sqFt', v)}      readOnly={hasMapLink} />}
+            {showLinFt && <DimInput label="Lin Ft" value={group.linearFt}  onChange={v => onUpdate(group.id, 'linearFt', v)}  readOnly={hasMapLink} />}
+            {showHeight && <DimInput label="Height" value={group.height}   onChange={v => onUpdate(group.id, 'height', v)}    step="0.5" />}
+            {showFaceFt && (
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-xs text-indigo-400 font-medium uppercase tracking-wide">Face Ft</span>
+                <div className="w-20 text-sm text-center bg-indigo-100 text-indigo-700 font-semibold rounded px-2 py-1">
+                  {faceFt.toLocaleString('en-US', { maximumFractionDigits: 1 })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
