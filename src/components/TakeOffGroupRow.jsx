@@ -186,13 +186,7 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
           {group.items.length}
         </span>
 
-        {/* Group total */}
-        <div className="shrink-0 text-right min-w-[5rem]">
-          <p className="text-sm font-bold text-indigo-800">${fmt(groupTotal)}</p>
-          <p className="text-xs text-indigo-400 print:hidden">group total</p>
-        </div>
-
-        {/* Save as Kit */}
+        {/* Save as Kit — before total columns so trailing button count matches item rows */}
         {!group.isPlantsGroup && !group.isItemsGroup && onSaveAsKit && (
           <button
             onClick={() => onSaveAsKit(group.id)}
@@ -205,6 +199,15 @@ export default function TakeOffGroupRow({ group, onUpdate, onToggleCollapse, onR
             </svg>
           </button>
         )}
+
+        {/* $/Unit spacer — keeps total aligned with item rows */}
+        <div className="w-24 shrink-0 print:hidden" />
+
+        {/* Group total — w-24 matches item Total column */}
+        <div className="shrink-0 w-24 text-right">
+          <p className="text-sm font-bold text-indigo-800">${fmt(groupTotal)}</p>
+          <p className="text-xs text-indigo-400 print:hidden">group total</p>
+        </div>
 
         {/* Notes toggle */}
         <button
